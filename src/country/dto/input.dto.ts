@@ -1,12 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateCountryDTO {
   @ApiProperty()
-  name: string;
+  @IsNotEmpty()
+  name: string
 
   @ApiProperty()
-  description: string;
+  @IsNotEmpty()
+  description: string
 
   @ApiProperty()
-  image: string;
+  @IsNotEmpty()
+  image: string
+}
+
+export class EditCountryDTO {
+  @ApiProperty()
+  name?: string
+
+  @ApiProperty()
+  description?: string
+
+  @ApiProperty()
+  image?: string
 }
