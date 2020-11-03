@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type CountryDocument = Country & Document
 @Schema()
-export class Country {
+export class Country extends Document{
   @Prop()
   name: string;
 

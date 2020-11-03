@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { PlacesService } from './place.service';
-import { CountriesController } from './place.controller';
+import { PlacesController } from './place.controller';
 
 import { Place, PlaceSchema } from './schemas/place.schema';
 
@@ -10,7 +10,7 @@ import { Place, PlaceSchema } from './schemas/place.schema';
   imports: [
     MongooseModule.forFeature([{ name: Place.name, schema: PlaceSchema }])
   ],
-  controllers: [CountriesController],
+  controllers: [PlacesController],
   providers: [PlacesService],
   exports: [PlacesService]
 })

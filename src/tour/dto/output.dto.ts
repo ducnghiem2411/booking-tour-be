@@ -1,5 +1,6 @@
 
-export class GetTour {
+export class TourDTO {
+  id: string;
   place: string;
   name: string;
   checkIn: Date;

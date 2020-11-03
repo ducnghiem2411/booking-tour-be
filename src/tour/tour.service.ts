@@ -12,15 +12,35 @@ export class ToursService {
     @InjectModel(Tour.name) private readonly tourModel: Model<Tour>,
   ) {}
 
-  async create (CreateTourDTO) {
-
+  async create(payload) {
+    const tour = new this.tourModel(payload);
+    await tour.save();
+    return tour;
   }
 
-  async delete () {
-
+  async getAll() {
+    // -pagination
+    return await this.tourModel.find()
   }
 
-  async findById (id) {
-    
+  async delete(id) {
+    const tour = await this.tourModel.deleteOne({ _id: id })
+    if(tour.deletedCount !== 0) {
+      return 'tour was deleted'
+    }
+    return 'no tour matched'
+  }
+
+  async findById(id) {
+    return await this.tourModel.findById(id)
+  }
+
+  async edit(id, payload) {
+    const tour = await this.tourModel.findById(id)
+    if (tour) {
+      await tour.updateOne(payload)
+      return 'edit tour successfully'
+    }
+    return 'no tour matched'
   }
 }

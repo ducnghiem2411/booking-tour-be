@@ -11,7 +11,6 @@ export class CreateCountryDTO {
   description: string
 
   @ApiProperty()
-  @IsNotEmpty()
   image: string
 }
 

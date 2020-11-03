@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, HttpException, Param, Request, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiOkResponse, ApiBody, ApiTags } from '@nestjs/swagger';
 
 import { CountriesService } from './country.service';
 
@@ -14,11 +15,14 @@ export class CountriesController {
   ) {}
   
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOkResponse({ description: 'Return created country', type: CountryDTO })
-  async create(@Body() body: CreateCountryDTO): Promise<CountryDTO> {
+  async create(@UploadedFile() file, @Body() body: CreateCountryDTO): Promise<CountryDTO> {
+    console.log(file);
+    console.log(body);
     let result
     try {
-      result = await this.countriesService.create(body);
+      result = await this.countriesService.create(file);
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
@@ -38,13 +42,25 @@ export class CountriesController {
   }
 
   @Put(':id')
-  @ApiBody({ description: 'Edit customer profile', type: EditCountryDTO })
+  @ApiBody({ description: 'Edit country', type: EditCountryDTO })
   @ApiOkResponse({ description: 'Return edited country', type: CountryDTO })
   async edit(@Param('id') id: string, @Body() body: EditCountryDTO): Promise<CountryDTO> {
     let result
     let payload = body
     try {
       result = await this.countriesService.edit(id, payload)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)             
+    }
+    return result
+  }
+
+  @Delete(':id')
+  @ApiOkResponse({ description: 'Return deleted country' })
+  async delete(@Param('id') id: string): Promise<string> {
+    let result
+    try {
+      result = await this.countriesService.delete(id)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)             
     }

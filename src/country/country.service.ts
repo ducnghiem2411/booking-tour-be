@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
-import { Country, CountryDocument } from './schemas/country.schema';
+import { Country } from './schemas/country.schema';
 
 @Injectable()
 export class CountriesService {
   constructor(
-    @InjectModel(Country.name) private readonly countryModel: Model<CountryDocument>,
+    @InjectModel(Country.name) private readonly countryModel: Model<Country>,
   ) {}
 
   async create(body) {
     const country = new this.countryModel(body);
-    country.save();
+    await country.save();
     return country;
   }
 
@@ -26,6 +26,14 @@ export class CountriesService {
     if (country) {
       await country.updateOne(payload)
       return 'edit country successfully'
+    }
+    return 'no country matched'
+  }
+
+  async delete(id: string): Promise<string> {
+    const country = await this.countryModel.deleteOne({ _id: id })
+    if(country.deletedCount !== 0) {
+      return 'country was deleted'
     }
     return 'no country matched'
   }

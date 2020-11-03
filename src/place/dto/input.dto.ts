@@ -1,15 +1,34 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsMongoId } from 'class-validator';
 
 export class CreatePlaceDTO {
-    @ApiProperty()
-    name: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsMongoId()
+  country: string;
 
-    @ApiProperty()
-    description: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  name: string;
 
-    @ApiProperty()
-    country: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  description: string;
 
-    @ApiProperty()
-    images: Array<string>;
+  @ApiProperty()
+  images: Array<string>;
+}
+
+export class EditPlaceDTO {
+  @ApiProperty()
+  country?: string;
+
+  @ApiProperty()
+  description?: string;
+
+  @ApiProperty()
+  name?: string;
+
+  @ApiProperty()
+  images?: string;
 }

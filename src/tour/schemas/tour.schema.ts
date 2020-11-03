@@ -11,10 +11,10 @@ export class Tour extends Document {
   name: string;
 
   @Prop()
-  checkIn: string;
+  checkIn: Date;
 
   @Prop()
-  checkOut: number;
+  checkOut: Date;
 
   @Prop()
   price: number;
