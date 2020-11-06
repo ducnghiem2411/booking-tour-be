@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req, Res } from '@nestjs/common';
-import { FileInterceptor, MulterOptionsFactory } from '@nestjs/platform-express';
-import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger'
 
-import { CountriesService } from './country.service';
-import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto';
+import { CountriesService } from './country.service'
+
+import { apiBodyCountry } from './schemas/api-doc.schema'
+import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
 import { CountryDTO } from './dto/output.dto'
 
 @ApiTags('Countries')
@@ -12,31 +14,15 @@ export class CountriesController {
   constructor(
     private readonly countriesService: CountriesService
   ) {}
-  
+
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-        },
-        description: {
-          type: 'string'
-        },
-        image: {
-          type: 'string',
-          format: 'binary',
-        }
-      },
-    },
-  })
+  @ApiBody({ schema: apiBodyCountry })
   @ApiOkResponse({ description: 'Return created country', type: CountryDTO })
   async create(@UploadedFile() file, @Req() req, @Body() body: CreateCountryDTO): Promise<CountryDTO> {
     let result
-    let payload = { name: body.name,  description: body.description, image: "" }
+    let payload = { ...body, image: "" }
     if (file) {
       const host = req.get('host')
       const imageUrl = `http://${host}/upload/${file.filename}`
@@ -49,7 +35,7 @@ export class CountriesController {
     }
     return result
   }
-  
+
   @Get()
   @ApiOkResponse({ description: 'Return edited country', type: [CountryDTO] })
   async getAll(): Promise<CountryDTO[]> {
@@ -57,21 +43,28 @@ export class CountriesController {
     try {
       result = await this.countriesService.getAll()
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)       
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
 
   @Put(':id')
-  @ApiBody({ description: 'Edit country', type: EditCountryDTO })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiBody({ schema: apiBodyCountry })
+  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({ description: 'Return edited country', type: CountryDTO })
-  async edit(@Param('id') id: string, @Body() body: EditCountryDTO): Promise<CountryDTO> {
+  async edit(@UploadedFile() file, @Req() req, @Param('id') id: string, @Body() body: EditCountryDTO): Promise<CountryDTO> {
     let result
-    let payload = body
+    let payload = { ...body }
+    if (file) {
+      const host = req.get('host')
+      const imageUrl = `http://${host}/upload/${file.filename}`
+      payload.image = imageUrl
+    }
     try {
       result = await this.countriesService.edit(id, payload)
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)             
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
@@ -83,7 +76,7 @@ export class CountriesController {
     try {
       result = await this.countriesService.delete(id)
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)             
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }

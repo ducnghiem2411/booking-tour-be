@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MulterModule } from '@nestjs/platform-express'
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { UsersModule } from './modules/user/user.module';

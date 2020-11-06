@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateCountryDTO {
   @ApiProperty()
@@ -16,11 +16,17 @@ export class CreateCountryDTO {
 
 export class EditCountryDTO {
   @ApiProperty()
+  @IsOptional()
+  @IsNotEmpty()
   name?: string
-
+  
   @ApiProperty()
+  @IsOptional()
+  @IsNotEmpty()
   description?: string
-
+  
   @ApiProperty()
+  @IsOptional()
+  @IsNotEmpty()
   image?: string
 }

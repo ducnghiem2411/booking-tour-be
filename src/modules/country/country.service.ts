@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
-import { Model } from 'mongoose';
-import { Country } from './schemas/country.schema';
+import { Model } from 'mongoose'
+import { Country } from './schemas/country.schema'
 
-import { CountryDTO } from './dto/output.dto';
-import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto';
+import { CountryDTO } from './dto/output.dto'
+import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
 
 @Injectable()
 export class CountriesService {
@@ -14,8 +14,8 @@ export class CountriesService {
   ) {}
 
   async create(payload: CreateCountryDTO): Promise<CountryDTO> {
-    const country = new this.countryModel(payload);
-    await country.save();
+    const country = new this.countryModel(payload)
+    await country.save()
     return country;
   }
 

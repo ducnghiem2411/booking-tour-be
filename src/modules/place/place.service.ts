@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
 import { Place } from './schemas/place.schema';
+import { Country } from '../country/schemas/country.schema';
 
 import { PlaceDTO } from './dto/output.dto';
 import { EditPlaceDTO, CreatePlaceDTO } from './dto/input.dto';
@@ -11,12 +12,19 @@ import { EditPlaceDTO, CreatePlaceDTO } from './dto/input.dto';
 export class PlacesService {
   constructor(
     @InjectModel(Place.name) private readonly placeModel: Model<Place>,
+    @InjectModel(Country.name) private readonly countryModel: Model<Country>
   ) {}
 
   async create(payload: CreatePlaceDTO): Promise<PlaceDTO> {
-    const place = new this.placeModel(payload);
-    await place.save();
-    return place;
+    const country = await this.countryModel.find({ _id: payload.countryId, name: payload.country})
+    if (!country.length) {
+      throw new BadRequestException('Country id or name does not match')
+    }
+    else {
+      const place = new this.placeModel(payload);
+      await place.save();
+      return place;
+    }
   }
 
   async getAll(): Promise<PlaceDTO[]> {
@@ -25,12 +33,16 @@ export class PlacesService {
   }
 
   async edit(id: string, payload: EditPlaceDTO): Promise<string> {
-    const place = await this.placeModel.findById(id)
-    if (place) {
-      await place.updateOne(payload)
-      return 'edit place successfully'
+    const country = await this.countryModel.find({ _id: payload.countryId, name: payload.country})
+    if (!country.length) {
+      throw new BadRequestException('Country id or name does not match')
     }
-    return 'no place matched'
+    const place = await this.placeModel.findById(id)
+    if (!place) {
+      throw new NotFoundException('Id not match')
+    }
+    await place.updateOne(payload)
+    return 'edit place successfully'
   }
 
   async delete(id: string): Promise<string> {
@@ -38,7 +50,9 @@ export class PlacesService {
     if(place.deletedCount !== 0) {
       return 'place was deleted'
     }
-    return 'no place matched'
+    else {
+      throw new NotFoundException('Id not match')
+    }
   }
 
 }

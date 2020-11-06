@@ -5,5 +5,5 @@ export class PlaceDTO {
   country: string
   name: string
   description: string;
-  images: Array<string>
+  image: string
 }

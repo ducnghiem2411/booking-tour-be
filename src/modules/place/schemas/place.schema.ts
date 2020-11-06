@@ -17,7 +17,7 @@ export class Place extends Document {
   description: string;
 
   @Prop()
-  images: Array<string>;
+  image: string;
 }
 
 export const PlaceSchema = SchemaFactory.createForClass(Place);

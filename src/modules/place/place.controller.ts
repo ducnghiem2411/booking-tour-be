@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, Delete } from '@nestjs/common';
-import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express'
 
 import { PlacesService } from './place.service';
 
+import { apiBodyPlace } from './schemas/api-doc.schema'
 import { CreatePlaceDTO, EditPlaceDTO } from './dto/input.dto';
 import { PlaceDTO } from './dto/output.dto'
 @ApiTags('Places')
@@ -13,11 +15,20 @@ export class PlacesController {
   ) {}
   
   @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: apiBodyPlace })
   @ApiOkResponse({ description: 'Return created place', type: CreatePlaceDTO })
-  async create(@Body() body: CreatePlaceDTO): Promise<CreatePlaceDTO> {
+  async create(@UploadedFile() file, @Req() req, @Body() body: CreatePlaceDTO): Promise<CreatePlaceDTO> {
     let result
+    let payload = { ...body, image: "" }
+    if (file) {
+      const host = req.get('host')
+      const imageUrl = `http://${host}/upload/${file.filename}`
+      payload.image = imageUrl
+    }
     try {
-        result = await this.placesService.create(body);
+        result = await this.placesService.create(payload);
     } catch (e) {
         throw new HttpException({...e}, e.statusCode)
     }
@@ -25,15 +36,22 @@ export class PlacesController {
   }
 
   @Put(':id')
-  @ApiBody({ description: 'Edit place', type: EditPlaceDTO })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: apiBodyPlace })
   @ApiOkResponse({ description: 'Return edited place', type: PlaceDTO })
-  async edit(@Param('id') id: string, @Body() body: EditPlaceDTO): Promise<PlaceDTO> {
+  async edit(@UploadedFile() file, @Req() req, @Param('id') id: string, @Body() body: EditPlaceDTO): Promise<PlaceDTO> {
     let result
-    let payload = body
+    let payload = { ...body }
+    if (file) {
+      const host = req.get('host')
+      const imageUrl = `http://${host}/upload/${file.filename}`
+      payload.image = imageUrl
+    }
     try {
       result = await this.placesService.edit(id, payload)
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)             
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
@@ -45,7 +63,7 @@ export class PlacesController {
     try {
       result = await this.placesService.getAll()
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)       
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
@@ -57,7 +75,7 @@ export class PlacesController {
     try {
       result = await this.placesService.delete(id)
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)             
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }

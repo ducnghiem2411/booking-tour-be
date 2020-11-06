@@ -1,11 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsMongoId } from 'class-validator';
+import { IsNotEmpty, IsMongoId, IsOptional } from 'class-validator';
 
 export class CreatePlaceDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
-  country: string;
+  countryId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  country: string
 
   @ApiProperty()
   @IsNotEmpty()
@@ -16,7 +20,7 @@ export class CreatePlaceDTO {
   description: string;
 
   @ApiProperty()
-  images: Array<string>;
+  image: string;
 }
 
 export class EditPlaceDTO {
@@ -26,14 +30,22 @@ export class EditPlaceDTO {
   countryId: string;
 
   @ApiProperty()
+  @IsOptional()
+  @IsNotEmpty()
   country?: string
-
+  
   @ApiProperty()
+  @IsOptional()
+  @IsNotEmpty()
   description?: string;
 
   @ApiProperty()
+  @IsOptional()
+  @IsNotEmpty()
   name?: string;
 
   @ApiProperty()
-  images?: string;
+  @IsOptional()
+  @IsNotEmpty()
+  image?: string;
 }

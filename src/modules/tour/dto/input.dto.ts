@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsMongoId } from "class-validator";
+import { IsNotEmpty, IsMongoId, IsOptional } from "class-validator";
 
 export class CreateTourDTO {
     @ApiProperty()
@@ -39,24 +39,38 @@ export class EditTourDTO {
     placeId: string
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     place: string
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     name?: string
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     checkIn?: Date;
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     checkOut?: Date;
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     member?: number;
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     price?: number;
 
     @ApiProperty()
+    @IsOptional()
+    @IsNotEmpty()
     images?: Array<string>
 }
 
