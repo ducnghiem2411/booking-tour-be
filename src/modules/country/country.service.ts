@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, BadRequestException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { Model } from 'mongoose'
@@ -26,19 +26,19 @@ export class CountriesService {
 
   async edit(id: string, payload: EditCountryDTO): Promise<string> {
     const country = await this.countryModel.findById(id)
-    if (country) {
-      await country.updateOne(payload)
-      return 'edit country successfully'
+    if (!country) {
+      throw new BadRequestException('Id not match')
     }
-    return 'no country matched'
+    await country.updateOne(payload)
+    return 'edit country successfully'
   }
 
   async delete(id: string): Promise<string> {
     const country = await this.countryModel.deleteOne({ _id: id })
-    if(country.deletedCount !== 0) {
-      return 'country was deleted'
+    if(country.deletedCount === 0) {
+      throw new BadRequestException('Id not match')
     }
-    return 'no country matched'
+    return 'country was deleted'
   }
 
 }

@@ -4,7 +4,7 @@ import { IsNotEmpty, IsMongoId, IsOptional } from "class-validator";
 export class CreateTourDTO {
     @ApiProperty()
     @IsNotEmpty()
-    @IsMongoId()
+    // @IsMongoId()
     place: string;
 
     @ApiProperty()
@@ -13,11 +13,11 @@ export class CreateTourDTO {
 
     @ApiProperty()
     @IsNotEmpty()
-    checkIn: Date;
+    checkIn: string;
 
     @ApiProperty()
     @IsNotEmpty()
-    checkOut: Date;
+    checkOut: string;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -28,7 +28,6 @@ export class CreateTourDTO {
     price: number;
 
     @ApiProperty()
-    @IsNotEmpty()
     images: Array<string>
 }
 

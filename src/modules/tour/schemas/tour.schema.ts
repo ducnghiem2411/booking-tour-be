@@ -14,10 +14,10 @@ export class Tour extends Document {
   name: string;
 
   @Prop()
-  checkIn: Date;
+  checkIn: string;
 
   @Prop()
-  checkOut: Date;
+  checkOut: string;
 
   @Prop()
   price: number;

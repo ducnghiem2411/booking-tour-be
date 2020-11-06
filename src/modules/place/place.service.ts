@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Model } from 'mongoose';
@@ -33,13 +33,13 @@ export class PlacesService {
   }
 
   async edit(id: string, payload: EditPlaceDTO): Promise<string> {
+    const place = await this.placeModel.findById(id)
+    if (!place) {
+      throw new BadRequestException('Id not match')
+    }
     const country = await this.countryModel.find({ _id: payload.countryId, name: payload.country})
     if (!country.length) {
       throw new BadRequestException('Country id or name does not match')
-    }
-    const place = await this.placeModel.findById(id)
-    if (!place) {
-      throw new NotFoundException('Id not match')
     }
     await place.updateOne(payload)
     return 'edit place successfully'
@@ -51,7 +51,7 @@ export class PlacesService {
       return 'place was deleted'
     }
     else {
-      throw new NotFoundException('Id not match')
+      throw new BadRequestException('Id not match')
     }
   }
 

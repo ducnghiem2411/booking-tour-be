@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, Delete } from '@nestjs/common'
-import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFiles, Req } from '@nestjs/common'
+import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger'
+import { FilesInterceptor } from '@nestjs/platform-express'
+
 import { ToursService } from './tour.service'
 
 import { CreateTourDTO, EditTourDTO } from './dto/input.dto'
 import { TourDTO } from './dto/output.dto'
+import { apiBodyTour } from './schemas/api-doc.schema'
 
 @ApiTags('Tours')
 @Controller('tours')
@@ -11,9 +14,21 @@ export class ToursController {
   constructor(private readonly toursService: ToursService) {}
 
   @Post()
+  @UseInterceptors(FilesInterceptor('images'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: apiBodyTour })
   @ApiOkResponse({ description: 'Return created tour', type: CreateTourDTO })
-  async create(@Body() body: CreateTourDTO): Promise<CreateTourDTO> {
+  async create(@UploadedFiles() files, @Req() req, @Body() body: CreateTourDTO): Promise<CreateTourDTO> {
     let result
+    let payload = { ...body, images: [] }
+    console.log(files)
+    if (files.length) {
+      const host = req.get('host')
+      files.forEach(f => {
+        payload.images.push(`http://${host}/upload/${f.filename}`)
+      })
+    }
+    console.log(payload);
     try {
       result = await this.toursService.create(body)
     } catch (e) {
@@ -66,7 +81,7 @@ export class ToursController {
     try {
       result = await this.toursService.edit(id, payload)
     } catch (e) {
-      throw new HttpException({...e}, e.statusCode)             
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
