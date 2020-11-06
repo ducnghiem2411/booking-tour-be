@@ -21,7 +21,12 @@ export class CreatePlaceDTO {
 
 export class EditPlaceDTO {
   @ApiProperty()
-  country?: string;
+  @IsNotEmpty()
+  @IsMongoId()
+  countryId: string;
+
+  @ApiProperty()
+  country?: string
 
   @ApiProperty()
   description?: string;

@@ -34,7 +34,12 @@ export class CreateTourDTO {
 
 export class EditTourDTO {
     @ApiProperty()
-    place?: string
+    @IsNotEmpty()
+    @IsMongoId()
+    placeId: string
+
+    @ApiProperty()
+    place: string
 
     @ApiProperty()
     name?: string

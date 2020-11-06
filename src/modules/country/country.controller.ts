@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiOkResponse, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req, Res } from '@nestjs/common';
+import { FileInterceptor, MulterOptionsFactory } from '@nestjs/platform-express';
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger';
 
 import { CountriesService } from './country.service';
-
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto';
 import { CountryDTO } from './dto/output.dto'
 
@@ -15,20 +14,42 @@ export class CountriesController {
   ) {}
   
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+        },
+        description: {
+          type: 'string'
+        },
+        image: {
+          type: 'string',
+          format: 'binary',
+        }
+      },
+    },
+  })
   @ApiOkResponse({ description: 'Return created country', type: CountryDTO })
-  async create(@UploadedFile() file, @Body() body: CreateCountryDTO): Promise<CountryDTO> {
-    console.log(file);
-    console.log(body);
+  async create(@UploadedFile() file, @Req() req, @Body() body: CreateCountryDTO): Promise<CountryDTO> {
     let result
+    let payload = { name: body.name,  description: body.description, image: "" }
+    if (file) {
+      const host = req.get('host')
+      const imageUrl = `http://${host}/upload/${file.filename}`
+      payload.image = imageUrl
+    }
     try {
-      result = await this.countriesService.create(file);
+      result = await this.countriesService.create(payload);
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
-
+  
   @Get()
   @ApiOkResponse({ description: 'Return edited country', type: [CountryDTO] })
   async getAll(): Promise<CountryDTO[]> {
@@ -68,3 +89,15 @@ export class CountriesController {
   }
 
 }
+
+
+// storage: MulterGoogleStorage.storageEngine({
+//   projectId: 'booking-tour-project',
+//   keyFilename: path.join(__dirname, '../booking-tour-project.json'),
+//   bucket: 'booking-tour-project.appspot.com',
+//   filename: (req, file, cb) => {
+//     const fileNameSplit = file.originalname.split('.')
+//     const fileExt = fileNameSplit[fileNameSplit.length - 1]
+//     cb(null, `${Date.now()}.${fileExt}`)
+//   }
+// })

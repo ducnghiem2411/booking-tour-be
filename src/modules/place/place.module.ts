@@ -15,4 +15,4 @@ import { Place, PlaceSchema } from './schemas/place.schema';
   exports: [PlacesService]
 })
 
-export class PlaceModule {}
+export class PlacesModule {}
