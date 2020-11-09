@@ -1,20 +1,21 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req } from '@nestjs/common'
+import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req, UseGuards } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger'
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger'
 
 import { CountriesService } from './country.service'
 
 import { apiBodyCountry } from './schemas/api-doc.schema'
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
 import { CountryDTO } from './dto/output.dto'
+import { AuthGuard } from 'src/modules/auth/auth.guard';
 
 @ApiTags('Countries')
 @Controller('countries')
 export class CountriesController {
   constructor(
     private readonly countriesService: CountriesService
-  ) {}
-
+    ) {}
+    
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
@@ -37,9 +38,12 @@ export class CountriesController {
   }
 
   @Get()
-  @ApiOkResponse({ description: 'Return edited country', type: [CountryDTO] })
-  async getAll(): Promise<CountryDTO[]> {
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({ description: 'Return all country', type: [CountryDTO] })
+  async getAll(@Req() req): Promise<CountryDTO[]> {
     let result
+    console.log(req);
     try {
       result = await this.countriesService.getAll()
     } catch (e) {
@@ -47,6 +51,19 @@ export class CountriesController {
     }
     return result
   }
+
+  @Get(':id')
+  @ApiOkResponse({ description: 'Return country by id', type: CountryDTO })
+  async getById(@Param('id') id: string): Promise<CountryDTO> {
+    let result
+    try {
+      result = await this.countriesService.getById(id)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('image'))

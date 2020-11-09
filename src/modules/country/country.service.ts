@@ -24,6 +24,10 @@ export class CountriesService {
     return await this.countryModel.find()
   }
 
+  async getById (id: string): Promise<CountryDTO> {
+    return await this.countryModel.findById(id)
+  }
+
   async edit(id: string, payload: EditCountryDTO): Promise<string> {
     const country = await this.countryModel.findById(id)
     if (!country) {

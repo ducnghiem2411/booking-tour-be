@@ -17,7 +17,7 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new TransformInterceptor)
   app.useGlobalFilters(new HttpExceptionFilter)
-  app.useGlobalPipes(new ValidationPipe)
+  app.useGlobalPipes(new ValidationPipe({whitelist: true}))
 
   if (ENV !== 'production') {
     // API documentation

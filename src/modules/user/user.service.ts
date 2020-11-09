@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { JwtService } from '@nestjs/jwt';
+import { JwtStrategy } from '../auth/jwt.strategy';
 
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
@@ -13,7 +13,7 @@ import { LoginDTO, CreateUserDTO } from './dto/input.dto';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    private jwtService: JwtService,
+    private readonly jwtStrategy: JwtStrategy
   ) {}
 
   async create(body: CreateUserDTO): Promise<User> {
@@ -36,7 +36,8 @@ export class UsersService {
     const user = await this.validateUser(loginDTO)
 
     if(user) {
-      const token = this.generateToken(user.email)
+      const payload = {email: user.email}
+      const token = this.jwtStrategy.generateToken(payload)
       return token
     }
     return 'false'
@@ -50,12 +51,6 @@ export class UsersService {
       return result;
     }
     return null;
-  }
-
-  async generateToken(userEmail: string) {
-    const payload = { email: userEmail };
-    const token = this.jwtService.sign(payload)
-    return token
   }
 
 }

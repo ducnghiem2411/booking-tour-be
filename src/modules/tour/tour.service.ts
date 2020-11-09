@@ -14,8 +14,6 @@ export class ToursService {
   ) {}
 
   async create(payload: CreateTourDTO): Promise<TourDTO> {
-    console.log('hi there')
-    console.log('payload', payload)
     const tour = new this.tourModel(payload);
     await tour.save();
     return tour;
