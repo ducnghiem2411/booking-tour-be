@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
-import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFile, Req, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express'
 
+import { UserGuard } from '../auth/auth.guard';
 import { PlacesService } from './place.service';
 
 import { apiBodyPlace } from './schemas/api-doc.schema'
@@ -57,7 +58,9 @@ export class PlacesController {
   }
 
   @Get()
-  @ApiOkResponse({ description: 'Return edited place', type: [PlaceDTO] })
+  @ApiBearerAuth()
+  @UseGuards(UserGuard)
+  @ApiOkResponse({ description: 'Return all place', type: [PlaceDTO] })
   async getAll(): Promise<PlaceDTO[]> {
     let result
     try {
@@ -69,7 +72,7 @@ export class PlacesController {
   }
 
   @Delete(':id')
-  @ApiOkResponse({ description: 'Return deleted country' })
+  @ApiOkResponse({ description: 'Return deleted place' })
   async delete(@Param('id') id: string): Promise<string> {
     let result
     try {

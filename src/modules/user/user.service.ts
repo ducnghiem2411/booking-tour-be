@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { JwtStrategy } from '../auth/jwt.strategy';
 
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
@@ -8,12 +7,14 @@ import { User } from './schemas/user.schema';
 import { GetUserDTO } from './dto/output.dto';
 import { LoginDTO, CreateUserDTO } from './dto/input.dto';
 
+import { TokenService } from '../token/token.service';
+import { log } from 'util';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    private readonly jwtStrategy: JwtStrategy
+    private readonly tokenService: TokenService
   ) {}
 
   async create(body: CreateUserDTO): Promise<User> {
@@ -24,33 +25,19 @@ export class UsersService {
 
   async findById(id: String): Promise<User> {
     const user = await this.userModel.findById(id).exec();
-    console.log(user)
     return user
   }
 
-  async findByEmail(email: string): Promise<User> {
-    return await this.userModel.findOne({email: email}).exec()
-  }
-
   async login(loginDTO: LoginDTO): Promise<string> {
-    const user = await this.validateUser(loginDTO)
-
+    const user = await this.userModel.findOne(loginDTO).select(['-password'])
+    console.log(user)
     if(user) {
-      const payload = {email: user.email}
-      const token = this.jwtStrategy.generateToken(payload)
+      const payload = { email: user.email }
+      console.log('payload', payload);
+      const token = this.tokenService.generateToken(payload)
       return token
     }
     return 'false'
-  }
-
-  async validateUser(loginDTO: LoginDTO): Promise<GetUserDTO> {
-    const { email, password } = loginDTO 
-    const user = await this.findByEmail(email);
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
   }
 
 }

@@ -2,12 +2,12 @@ import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger'
 
+import { UserGuard, AdminGuard } from 'src/modules/auth/auth.guard';
 import { CountriesService } from './country.service'
 
 import { apiBodyCountry } from './schemas/api-doc.schema'
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
 import { CountryDTO } from './dto/output.dto'
-import { AuthGuard } from 'src/modules/auth/auth.guard';
 
 @ApiTags('Countries')
 @Controller('countries')
@@ -39,11 +39,10 @@ export class CountriesController {
 
   @Get()
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminGuard)
   @ApiOkResponse({ description: 'Return all country', type: [CountryDTO] })
-  async getAll(@Req() req): Promise<CountryDTO[]> {
+  async getAll(): Promise<CountryDTO[]> {
     let result
-    console.log(req);
     try {
       result = await this.countriesService.getAll()
     } catch (e) {

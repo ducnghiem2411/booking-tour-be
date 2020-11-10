@@ -10,6 +10,8 @@ import { PlacesController } from './place.controller'
 
 import { Place, PlaceSchema } from './schemas/place.schema'
 import { Country, CountrySchema } from '../country/schemas/country.schema';
+import { AuthModule } from '../auth/auth.module';
+import { TokenModule } from '../token/token.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { Country, CountrySchema } from '../country/schemas/country.schema';
     MulterModule.register({
       fileFilter: imageFilter,
       storage : fileStorage
-    })
+    }),
+    AuthModule,
+    TokenModule
   ],
   controllers: [PlacesController],
   providers: [PlacesService],

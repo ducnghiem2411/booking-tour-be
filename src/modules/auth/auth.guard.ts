@@ -1,18 +1,46 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+
+import { TokenService } from '../token/token.service';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  constructor() {}
+export class UserGuard implements CanActivate {
+  constructor(
+    private tokenService: TokenService,
+  ) {}
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext) {
     const request =  context.switchToHttp().getRequest()
-    const token = request.headers.authorization.split(' ')[1]
-    
-    console.log('req header auth', request.headers.authorization)
-    console.log('token', token);
-    if (token) {
-      return true
+    const authHeader = request.headers.authorization
+    if (authHeader) {
+      const token = authHeader.split(' ')[1]
+      const payload = await this.tokenService.getPayload(token)
+      console.log('payload', payload);
+      if (payload) {
+        return true
+      }
     }
     throw new UnauthorizedException()
   }
+  
+}
+
+@Injectable()
+export class AdminGuard implements CanActivate {
+  constructor(
+    private tokenService: TokenService,
+  ) {}
+
+  async canActivate(context: ExecutionContext) {
+    const request =  context.switchToHttp().getRequest()
+    const authHeader = request.headers.authorization
+    if (authHeader) {
+      const token = authHeader.split(' ')[1]
+      const payload = await this.tokenService.getPayload(token)
+      if (payload.email === 'nghiemld@gmail.com') { //temporary
+        return true
+      }
+    }
+    throw new ForbiddenException()
+  }
+  
 }

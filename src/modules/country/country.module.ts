@@ -5,8 +5,10 @@ import { MulterModule } from '@nestjs/platform-express'
 import { imageFilter } from 'src/shared/file-filter'
 import { fileStorage } from 'src/shared/file-storage'
 
-import { CountriesService } from './country.service'
+import { AuthModule } from '../auth/auth.module'
+import { TokenModule } from '../token/token.module'
 import { CountriesController } from './country.controller'
+import { CountriesService } from './country.service'
 
 import { Country, CountrySchema } from './schemas/country.schema'
 
@@ -16,7 +18,9 @@ import { Country, CountrySchema } from './schemas/country.schema'
     MulterModule.register({
       fileFilter: imageFilter,
       storage : fileStorage
-    })
+    }),
+    AuthModule,
+    TokenModule
   ],
   controllers: [CountriesController],
   providers: [CountriesService],

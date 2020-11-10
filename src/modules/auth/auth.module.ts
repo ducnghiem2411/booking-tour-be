@@ -1,17 +1,12 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.strategy';
+
+import { TokenModule } from '../token/token.module';
+import { UserGuard, AdminGuard } from './auth.guard';
 
 @Module({
-  imports: [
-    JwtModule.register({
-      secret: 'secret-key',
-      signOptions: { expiresIn: '1d' }
-    })
-  ],
-  controllers: [],
-  providers: [JwtStrategy],
-  exports: [JwtStrategy]
+  imports: [TokenModule],
+  providers: [UserGuard, AdminGuard],
+  exports: [UserGuard, AdminGuard]
 })
 
 export class AuthModule {}
