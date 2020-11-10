@@ -34,7 +34,9 @@ export class CountriesService {
       throw new BadRequestException('Id not match')
     }
     await country.updateOne(payload)
-    return 'edit country successfully'
+    const editedCountry = await this.countryModel.findById(id)
+    console.log('editedCountry', editedCountry);
+    return editedCountry
   }
 
   async delete(id: string): Promise<string> {

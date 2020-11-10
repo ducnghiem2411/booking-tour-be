@@ -14,4 +14,4 @@ export class Booking extends Document {
   count: number
 }
 
-export const TourSchema = SchemaFactory.createForClass(Booking);
+export const BookingSchema = SchemaFactory.createForClass(Booking);
