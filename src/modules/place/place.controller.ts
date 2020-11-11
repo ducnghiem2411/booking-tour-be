@@ -8,6 +8,7 @@ import { PlacesService } from './place.service';
 import { apiBodyPlace } from './schemas/api-doc.schema'
 import { CreatePlaceDTO, EditPlaceDTO } from './dto/input.dto';
 import { PlaceDTO } from './dto/output.dto'
+import { async } from 'rxjs';
 @ApiTags('Places')
 @Controller('places')
 export class PlacesController {
@@ -58,8 +59,8 @@ export class PlacesController {
   }
 
   @Get()
-  @ApiBearerAuth()
-  @UseGuards(UserGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(UserGuard)
   @ApiOkResponse({ description: 'Return all place', type: [PlaceDTO] })
   async getAll(): Promise<PlaceDTO[]> {
     let result
@@ -69,6 +70,18 @@ export class PlacesController {
       throw new HttpException({...e}, e.statusCode)
     }
     return result
+  }
+
+  @Get(':countryId')
+  @ApiOkResponse({ description: 'Return places by country id'})
+  async getPlaceByCountryId(@Param('countryId') id: string): Promise<PlaceDTO[]> {
+      let result
+      try {
+        result = await this.placesService.getPlaceByCountryId(id)
+      } catch (e) {
+        throw new HttpException({...e}, e.statusCode)
+      }
+      return result
   }
 
   @Delete(':id')

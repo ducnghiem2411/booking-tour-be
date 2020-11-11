@@ -14,9 +14,13 @@ export class CountriesService {
   ) {}
 
   async create(payload: CreateCountryDTO): Promise<CountryDTO> {
-    const country = new this.countryModel(payload)
-    await country.save()
-    return country;
+    const country = await this.countryModel.findOne({ name: payload.name })
+    if (country) {
+      throw new BadRequestException('Country is existed')
+    }
+    const newCountry = new this.countryModel(payload)
+    await newCountry.save()
+    return newCountry
   }
 
   async getAll(): Promise<CountryDTO[]> {

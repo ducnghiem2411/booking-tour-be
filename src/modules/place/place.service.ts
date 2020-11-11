@@ -32,6 +32,10 @@ export class PlacesService {
     return await this.placeModel.find()
   }
 
+  async getPlaceByCountryId(id: string): Promise<PlaceDTO[]> {
+    return await this.placeModel.find({ countryId: id })
+  }
+
   async edit(id: string, payload: EditPlaceDTO): Promise<string> {
     const place = await this.placeModel.findById(id)
     if (!place) {
