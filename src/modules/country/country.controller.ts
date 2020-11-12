@@ -5,7 +5,7 @@ import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@ne
 import { UserGuard, AdminGuard } from 'src/modules/auth/auth.guard';
 import { CountriesService } from './country.service'
 
-import { apiBodyCountry } from './schemas/api-doc.schema'
+import { bodyCreateCountry, bodyEditCountry } from './schemas/api-doc.schema'
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
 import { CountryDTO } from './dto/output.dto'
 
@@ -19,7 +19,7 @@ export class CountriesController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ schema: apiBodyCountry })
+  @ApiBody({ schema: bodyCreateCountry })
   @ApiOkResponse({ description: 'Return created country', type: CountryDTO })
   async create(@UploadedFile() file, @Req() req, @Body() body: CreateCountryDTO): Promise<CountryDTO> {
     let result
@@ -58,9 +58,9 @@ export class CountriesController {
     console.log('total', total);
     let result
     try {
-      console.log('asdasd')
       result = await this.countriesService.getTopDestination()
     } catch (e) {
+      console.log(e)
       throw new HttpException({...e}, e.statusCode)
     }
     return result
@@ -80,7 +80,7 @@ export class CountriesController {
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('image'))
-  @ApiBody({ schema: apiBodyCountry })
+  @ApiBody({ schema: bodyEditCountry })
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({ description: 'Return edited country', type: CountryDTO })
   async edit(@UploadedFile() file, @Req() req, @Param('id') id: string, @Body() body: EditCountryDTO): Promise<CountryDTO> {

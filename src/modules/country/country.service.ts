@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { Country } from './schemas/country.schema'
 import { Place } from '../place/schemas/place.schema';
+import { Tour } from '../tour/schemas/tour.schema';
 
 import { CountryDTO } from './dto/output.dto'
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
@@ -13,6 +14,7 @@ export class CountriesService {
   constructor(
     @InjectModel(Country.name) private readonly countryModel: Model<Country>,
     @InjectModel(Place.name) private readonly placeModel: Model<Place>,
+    @InjectModel(Tour.name) private readonly tourModel: Model<Tour>,
   ) {}
 
   async create(payload: CreateCountryDTO): Promise<CountryDTO> {
@@ -31,9 +33,18 @@ export class CountriesService {
   }
 
   async getTopDestination(): Promise<any> {
-    const country = await this.placeModel.estimatedDocumentCount()
-    console.log('country', country)
-    return country
+    const tour = await this.tourModel.aggregate()
+    .unwind('placeId', 'place')
+    //group all tour has the same placeId and count
+    .group({
+      _id: '$placeId',
+      place: { '$first': '$place' },
+      totalTour: { '$sum': 1 },  
+    })
+    //highest totalTour 1st
+    .sort({ totalTour: -1 })  
+    .exec()
+    return tour
   }
   
   async getById (id: string): Promise<CountryDTO> {

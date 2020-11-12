@@ -5,10 +5,9 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { UserGuard } from '../auth/auth.guard';
 import { PlacesService } from './place.service';
 
-import { apiBodyPlace } from './schemas/api-doc.schema'
+import { bodyEditPlace, bodyCreatePlace } from './schemas/api-doc.schema'
 import { CreatePlaceDTO, EditPlaceDTO } from './dto/input.dto';
 import { PlaceDTO } from './dto/output.dto'
-import { async } from 'rxjs';
 @ApiTags('Places')
 @Controller('places')
 export class PlacesController {
@@ -19,7 +18,7 @@ export class PlacesController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ schema: apiBodyPlace })
+  @ApiBody({ schema: bodyCreatePlace })
   @ApiOkResponse({ description: 'Return created place', type: CreatePlaceDTO })
   async create(@UploadedFile() file, @Req() req, @Body() body: CreatePlaceDTO): Promise<CreatePlaceDTO> {
     let result
@@ -66,7 +65,7 @@ export class PlacesController {
   @Put(':id')
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ schema: apiBodyPlace })
+  @ApiBody({ schema: bodyEditPlace })
   @ApiOkResponse({ description: 'Return edited place', type: PlaceDTO })
   async edit(@UploadedFile() file, @Req() req, @Param('id') id: string, @Body() body: EditPlaceDTO): Promise<PlaceDTO> {
     let result

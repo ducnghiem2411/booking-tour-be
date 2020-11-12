@@ -21,7 +21,7 @@ export class ToursController {
   async create(@UploadedFiles() files, @Req() req, @Body() body: CreateTourDTO): Promise<CreateTourDTO> {
     let result
     let payload = { ...body, images: [] }
-    if (files.length) {
+    if (files && files.length) {
       const host = req.get('host')
       files.forEach(f => {
         payload.images.push(`http://${host}/upload/${f.filename}`)
@@ -59,7 +59,7 @@ export class ToursController {
     return result
   }
 
-  @Get('/placeid/:id')
+  @Get('/place-id/:id')
   @ApiOkResponse({ description: 'Return tour by place id'})
   async getTourByPlaceId(@Param('id') placeId: string): Promise<any> {
     let result
@@ -72,8 +72,8 @@ export class ToursController {
   }
   
   @Put(':id')
-  @ApiBody({ description: 'Edit country', type: EditTourDTO })
-  @ApiOkResponse({ description: 'Return edited country', type: TourDTO })
+  @ApiBody({ description: 'Edit tour', type: EditTourDTO })
+  @ApiOkResponse({ description: 'Return edited tour', type: TourDTO })
   async edit(@Param('id') id: string, @Body() body: EditTourDTO): Promise<TourDTO> {
     let result
     let payload = body
@@ -95,4 +95,5 @@ export class ToursController {
     }
     return result
   }
+
 }

@@ -34,6 +34,9 @@ export class Tour extends Document {
   member: number;
 
   @Prop()
+  description: string
+
+  @Prop()
   images: Array<string>;
 }
 

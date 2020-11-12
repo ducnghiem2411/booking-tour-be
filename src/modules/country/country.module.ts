@@ -12,12 +12,14 @@ import { CountriesService } from './country.service'
 
 import { Country, CountrySchema } from './schemas/country.schema'
 import { Place, PlaceSchema } from '../place/schemas/place.schema';
+import { Tour, TourSchema } from '../tour/schemas/tour.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Country.name, schema: CountrySchema },
-      { name: Place.name, schema: PlaceSchema}
+      { name: Place.name, schema: PlaceSchema},
+      { name: Tour.name, schema: TourSchema }
     ]),
     MulterModule.register({
       fileFilter: imageFilter,
