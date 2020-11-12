@@ -13,6 +13,15 @@ export class CreateTourDTO {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsMongoId()
+  countryId: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  country: string
+
+  @ApiProperty()
+  @IsNotEmpty()
   name: string;
 
   @ApiProperty()
