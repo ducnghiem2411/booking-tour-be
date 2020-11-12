@@ -60,7 +60,7 @@ export class ToursController {
   }
 
   @Get('/placeid/:id')
-  @ApiOkResponse({ description: 'Return tour by place id wtfff'})
+  @ApiOkResponse({ description: 'Return tour by place id'})
   async getTourByPlaceId(@Param('id') placeId: string): Promise<any> {
     let result
     try {

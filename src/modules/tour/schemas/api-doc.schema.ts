@@ -1,6 +1,8 @@
 export const apiBodyTour = {
   type: 'object',
   properties: {
+    countryId: { type: 'string' },
+    country: { type: 'string' },
     placeId: { type: 'string' },
     place: { type: 'string' },
     name: { type: 'string' },

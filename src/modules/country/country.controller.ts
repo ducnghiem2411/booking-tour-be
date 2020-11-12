@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors, UploadedFile, Delete, Req, UseGuards, Query } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger'
 
@@ -51,6 +51,21 @@ export class CountriesController {
     return result
   }
 
+  
+  @Get('/top-destination')
+  @ApiOkResponse({ description: 'Return top destination' })
+  async getTopDestination(@Query('total') total: number): Promise<CountryDTO[]> {
+    console.log('total', total);
+    let result
+    try {
+      console.log('asdasd')
+      result = await this.countriesService.getTopDestination()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+  
   @Get(':id')
   @ApiOkResponse({ description: 'Return country by id', type: CountryDTO })
   async getById(@Param('id') id: string): Promise<CountryDTO> {
@@ -62,19 +77,6 @@ export class CountriesController {
     }
     return result
   }
-
-  @Get('top-destination')
-  @ApiOkResponse({ description: 'Return top destination' })
-  async getTopDestination(): Promise<CountryDTO[]> {
-    let result
-    try {
-      result = await this.countriesService.getTopDestination()
-    } catch (e) {
-      throw new HttpException({...e}, e.statusCode)
-    }
-    return result
-  }
-
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('image'))
