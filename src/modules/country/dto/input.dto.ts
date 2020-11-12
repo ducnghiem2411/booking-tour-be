@@ -18,11 +18,6 @@ export class EditCountryDTO {
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  name?: string
-  
-  @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
   description?: string
   
   @ApiProperty()
