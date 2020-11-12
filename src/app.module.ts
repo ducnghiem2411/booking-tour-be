@@ -14,11 +14,11 @@ import { BookingModule } from './modules/booking/booking.module';
       `mongodb+srv://nghiemld:pBooktour123@cluster0.txwil.mongodb.net/BookTour?retryWrites=true&w=majority`
     ),
     UsersModule,
-    ToursModule,
-    PlacesModule,
     CountriesModule,
+    PlacesModule,
+    ToursModule,
+    BookingModule,
     FileModule,
-    BookingModule
   ]
 })
 

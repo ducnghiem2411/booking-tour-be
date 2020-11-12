@@ -7,11 +7,17 @@ import { BookingController } from "./booking.controller";
 import { BookingService } from "./booking.service";
 
 import { Booking, BookingSchema } from "./schemas/booking.schema";
+import { ToursModule } from "../tour/tour.module";
+import { Tour, TourSchema } from "../tour/schemas/tour.schema";
 @Module({
     imports: [
-      MongooseModule.forFeature([{ name: Booking.name, schema: BookingSchema }]),
+      MongooseModule.forFeature([
+        { name: Booking.name, schema: BookingSchema }, 
+        { name: Tour.name, schema: TourSchema }
+      ]),
       AuthModule,
-      TokenModule
+      TokenModule,
+      ToursModule
     ],
     controllers: [BookingController],
     providers: [BookingService]

@@ -38,8 +38,8 @@ export class CountriesController {
   }
 
   @Get()
-  @ApiBearerAuth()
-  @UseGuards(AdminGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(AdminGuard)
   @ApiOkResponse({ description: 'Return all country', type: [CountryDTO] })
   async getAll(): Promise<CountryDTO[]> {
     let result
@@ -57,6 +57,18 @@ export class CountriesController {
     let result
     try {
       result = await this.countriesService.getById(id)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Get('top-destination')
+  @ApiOkResponse({ description: 'Return top destination' })
+  async getTopDestination(): Promise<CountryDTO[]> {
+    let result
+    try {
+      result = await this.countriesService.getTopDestination()
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

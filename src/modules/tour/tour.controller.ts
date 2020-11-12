@@ -35,11 +35,12 @@ export class ToursController {
     return result
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<string> {
+  @Get()
+  @ApiOkResponse({ description: 'Return all tour', type: [TourDTO] })
+  async getAll(): Promise<TourDTO[]> {
     let result
     try {
-      result = await this.toursService.delete(id)
+      result = this.toursService.getAll()
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
@@ -58,18 +59,18 @@ export class ToursController {
     return result
   }
 
-  @Get()
-  @ApiOkResponse({ description: 'Return all tour', type: [TourDTO] })
-  async getAll(): Promise<TourDTO[]> {
+  @Get('/placeid/:id')
+  @ApiOkResponse({ description: 'Return tour by place id wtfff'})
+  async getTourByPlaceId(@Param('id') placeId: string): Promise<any> {
     let result
     try {
-      result = this.toursService.getAll()
+      result = await this.toursService.getTourByPlaceId(placeId)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
-
+  
   @Put(':id')
   @ApiBody({ description: 'Edit country', type: EditTourDTO })
   @ApiOkResponse({ description: 'Return edited country', type: TourDTO })
@@ -78,6 +79,17 @@ export class ToursController {
     let payload = body
     try {
       result = await this.toursService.edit(id, payload)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<string> {
+    let result
+    try {
+      result = await this.toursService.delete(id)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

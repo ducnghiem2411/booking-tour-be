@@ -16,15 +16,17 @@ export class PlacesService {
   ) {}
 
   async create(payload: CreatePlaceDTO): Promise<PlaceDTO> {
-    const country = await this.countryModel.find({ _id: payload.countryId, name: payload.country})
-    if (!country.length) {
+    const country = await this.countryModel.findOne({ _id: payload.countryId, name: payload.country})
+    if (!country) {
       throw new BadRequestException('Country id or name does not match')
     }
-    else {
-      const place = new this.placeModel(payload);
-      await place.save();
-      return place;
+    const place = await this.placeModel.findOne({ name: payload.name })
+    if (place) {
+      throw new BadRequestException('Place is existed')      
     }
+    const newPlace = new this.placeModel(payload)
+    await newPlace.save()
+    return newPlace
   }
 
   async getAll(): Promise<PlaceDTO[]> {
@@ -36,17 +38,12 @@ export class PlacesService {
     return await this.placeModel.find({ countryId: id })
   }
 
-  async edit(id: string, payload: EditPlaceDTO): Promise<string> {
-    const place = await this.placeModel.findById(id)
+  async edit(id: string, payload: EditPlaceDTO): Promise<any> {
+    const place = await this.placeModel.findByIdAndUpdate(id, payload, {new: true})
     if (!place) {
       throw new BadRequestException('Id not match')
     }
-    const country = await this.countryModel.find({ _id: payload.countryId, name: payload.country})
-    if (!country.length) {
-      throw new BadRequestException('Country id or name does not match')
-    }
-    await place.updateOne(payload)
-    return 'edit place successfully'
+    return place
   }
 
   async delete(id: string): Promise<string> {

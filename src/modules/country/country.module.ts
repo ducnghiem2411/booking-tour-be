@@ -11,10 +11,14 @@ import { CountriesController } from './country.controller'
 import { CountriesService } from './country.service'
 
 import { Country, CountrySchema } from './schemas/country.schema'
+import { Place, PlaceSchema } from '../place/schemas/place.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Country.name, schema: CountrySchema }]),
+    MongooseModule.forFeature([
+      { name: Country.name, schema: CountrySchema },
+      { name: Place.name, schema: PlaceSchema}
+    ]),
     MulterModule.register({
       fileFilter: imageFilter,
       storage : fileStorage

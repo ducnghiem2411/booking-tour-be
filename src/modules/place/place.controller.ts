@@ -37,6 +37,32 @@ export class PlacesController {
     return result
   }
 
+  @Get()
+  // @ApiBearerAuth()
+  // @UseGuards(UserGuard)
+  @ApiOkResponse({ description: 'Return all place', type: [PlaceDTO] })
+  async getAll(): Promise<PlaceDTO[]> {
+    let result
+    try {
+      result = await this.placesService.getAll()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Get(':countryId')
+  @ApiOkResponse({ description: 'Return places by country id'})
+  async getPlaceByCountryId(@Param('countryId') id: string): Promise<PlaceDTO[]> {
+    let result
+    try {
+      result = await this.placesService.getPlaceByCountryId(id)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
   @Put(':id')
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
@@ -56,32 +82,6 @@ export class PlacesController {
       throw new HttpException({...e}, e.statusCode)
     }
     return result
-  }
-
-  @Get()
-  // @ApiBearerAuth()
-  // @UseGuards(UserGuard)
-  @ApiOkResponse({ description: 'Return all place', type: [PlaceDTO] })
-  async getAll(): Promise<PlaceDTO[]> {
-    let result
-    try {
-      result = await this.placesService.getAll()
-    } catch (e) {
-      throw new HttpException({...e}, e.statusCode)
-    }
-    return result
-  }
-
-  @Get(':countryId')
-  @ApiOkResponse({ description: 'Return places by country id'})
-  async getPlaceByCountryId(@Param('countryId') id: string): Promise<PlaceDTO[]> {
-      let result
-      try {
-        result = await this.placesService.getPlaceByCountryId(id)
-      } catch (e) {
-        throw new HttpException({...e}, e.statusCode)
-      }
-      return result
   }
 
   @Delete(':id')

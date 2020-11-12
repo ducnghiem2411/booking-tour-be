@@ -28,4 +28,40 @@ export class BookingController {
     return result
   }
 
+  @Get()
+  @ApiBody({})
+  async getAll() {
+    let result
+    try {
+      result = await this.bookingService.getAll()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+  
+  @Put()
+  @ApiBody({})
+  async edit() {
+    let result
+    try {
+      result = await this.bookingService.edit()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Delete(':id')
+  @ApiBody({})
+  async delete() {
+    let result
+    try {
+      result = await this.bookingService.delete()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
 }

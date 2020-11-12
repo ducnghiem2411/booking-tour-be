@@ -9,11 +9,13 @@ import { ToursService } from './tour.service'
 import { ToursController } from './tour.controller'
 
 import { Tour, TourSchema } from './schemas/tour.schema'
+import { Place, PlaceSchema } from '../place/schemas/place.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Tour.name, schema: TourSchema },
+      { name: Place.name, schema: PlaceSchema }
     ]),
     MulterModule.register({
       fileFilter: imageFilter,
