@@ -1,9 +1,11 @@
 import { Body, Controller, Get, Post, HttpException, Param, Request } from '@nestjs/common';
 import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './user.service';
+
+import { User } from './schemas/user.schema';
+
 import { GetUserDTO } from './dto/output.dto';
 import { LoginDTO, CreateUserDTO } from './dto/input.dto'
-import { User } from './schemas/user.schema';
 
 @Controller('users')
 @ApiTags('Users')

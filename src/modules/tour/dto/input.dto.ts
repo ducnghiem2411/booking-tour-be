@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsMongoId, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsMongoId, IsOptional, IsString, IsNumber, IsDate } from 'class-validator';
 
 export class CreateTourDTO {
   @ApiProperty()
@@ -41,20 +41,14 @@ export class CreateTourDTO {
   price: number;
 
   @ApiProperty()
+  @IsNotEmpty()
+  description: string 
+
+  @ApiProperty()
   images: Array<string>;
 }
 
 export class EditTourDTO {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsMongoId()
-  placeId: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
-  place: string;
-
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
@@ -84,4 +78,41 @@ export class EditTourDTO {
   @IsOptional()
   @IsNotEmpty()
   images?: Array<string>;
+}
+
+export class ListTourQuery {
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsString()
+  country: string
+  
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsString()
+  place: string
+  
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsNumber()
+  member: number
+  
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsNumber()
+  minprice: number
+  
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsNumber()
+  maxprice: number
+  
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsDate()
+  checkin: Date
+  
+  @ApiProperty({required: false})
+  @IsOptional()
+  @IsDate()
+  checkout: Date
 }

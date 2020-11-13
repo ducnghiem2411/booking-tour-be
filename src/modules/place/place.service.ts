@@ -7,12 +7,14 @@ import { Country } from '../country/schemas/country.schema';
 
 import { PlaceDTO } from './dto/output.dto';
 import { EditPlaceDTO, CreatePlaceDTO } from './dto/input.dto';
+import { Tour } from '../tour/schemas/tour.schema';
 
 @Injectable()
 export class PlacesService {
   constructor(
     @InjectModel(Place.name) private readonly placeModel: Model<Place>,
-    @InjectModel(Country.name) private readonly countryModel: Model<Country>
+    @InjectModel(Country.name) private readonly countryModel: Model<Country>,
+    @InjectModel(Tour.name) private readonly tourModel: Model<Tour>
   ) {}
 
   async create(payload: CreatePlaceDTO): Promise<PlaceDTO> {
@@ -39,16 +41,17 @@ export class PlacesService {
   }
 
   async edit(id: string, payload: EditPlaceDTO): Promise<any> {
-    const place = await this.placeModel.findByIdAndUpdate(id, payload, {new: true})
-    if (!place) {
+    const editedPlace = await this.placeModel.findByIdAndUpdate(id, payload, {new: true})
+    if (!editedPlace) {
       throw new BadRequestException('Id not match')
     }
-    return place
+    return editedPlace
   }
 
   async delete(id: string): Promise<string> {
-    const place = await this.placeModel.deleteOne({ _id: id })
-    if(place.deletedCount !== 0) {
+    const place = await this.placeModel.findOneAndDelete({ _id: id })
+    if(place) {
+      await this.tourModel.deleteMany({ placeId: id })
       return 'place was deleted'
     }
     else {

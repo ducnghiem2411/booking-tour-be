@@ -60,13 +60,15 @@ export class CountriesService {
   }
 
   async delete(id: string): Promise<string> {
-    const country = await this.countryModel.findById(id)
-    if(!country) {
+    const country =  this.countryModel.findOneAndDelete({ _id: id })
+    if(country) {
+      await this.placeModel.deleteMany({ countryId: country._id })
+      await this.tourModel.deleteMany({ countryId: country._id })
+      return 'Country was deleted'
+    }
+    else {
       throw new BadRequestException('Id not match')
     }
-    await this.countryModel.deleteOne({ _id: country._id })
-    await this.placeModel.deleteMany({ countryId: country._id })
-    return 'Country was deleted'
   }
 
 }

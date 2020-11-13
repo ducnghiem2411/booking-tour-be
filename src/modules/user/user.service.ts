@@ -1,14 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadGatewayException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
+import { TokenService } from '../token/token.service';
 
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 
-import { GetUserDTO } from './dto/output.dto';
 import { LoginDTO, CreateUserDTO } from './dto/input.dto';
 
-import { TokenService } from '../token/token.service';
-import { log } from 'util';
 
 @Injectable()
 export class UsersService {
@@ -18,9 +17,16 @@ export class UsersService {
   ) {}
 
   async create(body: CreateUserDTO): Promise<User> {
-    const user = new this.userModel(body);
-    user.save();
-    return user;
+    const user = await this.userModel.find()
+    .where({ username: body.username })
+    .where({ email: body.email })
+    console.log(user)
+    if (user) {
+      throw new BadGatewayException('User existed')
+    }
+    const newUser = new this.userModel(body);
+    await newUser.save();
+    return newUser;
   }
 
   async findById(id: String): Promise<User> {
@@ -37,7 +43,7 @@ export class UsersService {
       const token = this.tokenService.generateToken(payload)
       return token
     }
-    return 'false'
+    return 'Invalid username or password'
   }
 
 }

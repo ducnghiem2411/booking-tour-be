@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFiles, Req } from '@nestjs/common'
+import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFiles, Req, Query } from '@nestjs/common'
 import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger'
 import { FilesInterceptor } from '@nestjs/platform-express'
 
 import { ToursService } from './tour.service'
 
-import { CreateTourDTO, EditTourDTO } from './dto/input.dto'
+import { CreateTourDTO, EditTourDTO, ListTourQuery } from './dto/input.dto'
 import { TourDTO } from './dto/output.dto'
-import { apiBodyTour } from './schemas/api-doc.schema'
+import { bodyCreateTour, bodyEditTour } from './schemas/api-doc.schema'
 
 @ApiTags('Tours')
 @Controller('tours')
@@ -16,7 +16,7 @@ export class ToursController {
   @Post()
   @UseInterceptors(FilesInterceptor('images'))
   @ApiConsumes('multipart/form-data')
-  @ApiBody({ schema: apiBodyTour })
+  @ApiBody({ schema: bodyCreateTour })
   @ApiOkResponse({ description: 'Return created tour', type: CreateTourDTO })
   async create(@UploadedFiles() files, @Req() req, @Body() body: CreateTourDTO): Promise<CreateTourDTO> {
     let result
@@ -37,10 +37,11 @@ export class ToursController {
 
   @Get()
   @ApiOkResponse({ description: 'Return all tour', type: [TourDTO] })
-  async getAll(): Promise<TourDTO[]> {
+  async getAll(@Query() options: ListTourQuery): Promise<TourDTO[]> {
+    console.log('options', options);
     let result
     try {
-      result = this.toursService.getAll()
+      result = this.toursService.getAll(options)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
@@ -72,7 +73,8 @@ export class ToursController {
   }
   
   @Put(':id')
-  @ApiBody({ description: 'Edit tour', type: EditTourDTO })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ description: 'Edit tour', schema: bodyEditTour })
   @ApiOkResponse({ description: 'Return edited tour', type: TourDTO })
   async edit(@Param('id') id: string, @Body() body: EditTourDTO): Promise<TourDTO> {
     let result
