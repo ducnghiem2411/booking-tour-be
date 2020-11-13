@@ -17,12 +17,9 @@ export class UsersService {
   ) {}
 
   async create(body: CreateUserDTO): Promise<User> {
-    const user = await this.userModel.find()
-    .where({ username: body.username })
-    .where({ email: body.email })
-    console.log(user)
+    const user = await this.userModel.findOne({$or: [{email: body.email}, {username: body.username}]})
     if (user) {
-      throw new BadGatewayException('User existed')
+      throw new BadGatewayException('Username or email is already used')
     }
     const newUser = new this.userModel(body);
     await newUser.save();
