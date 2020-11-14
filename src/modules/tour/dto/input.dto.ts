@@ -108,11 +108,9 @@ export class ListTourQuery {
   
   @ApiProperty({required: false})
   @IsOptional()
-  @IsDate()
   checkin: Date
   
   @ApiProperty({required: false})
   @IsOptional()
-  @IsDate()
   checkout: Date
 }

@@ -1,4 +1,4 @@
-import { Injectable, BadGatewayException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { TokenService } from '../token/token.service';
@@ -19,7 +19,7 @@ export class UsersService {
   async create(body: CreateUserDTO): Promise<User> {
     const user = await this.userModel.findOne({$or: [{email: body.email}, {username: body.username}]})
     if (user) {
-      throw new BadGatewayException('Username or email is already used')
+      throw new BadRequestException('Username or email is already used')
     }
     const newUser = new this.userModel(body);
     await newUser.save();
@@ -31,16 +31,18 @@ export class UsersService {
     return user
   }
 
-  async login(loginDTO: LoginDTO): Promise<string> {
+  async login(loginDTO: LoginDTO): Promise<any> {
     const user = await this.userModel.findOne(loginDTO).select(['-password'])
     console.log(user)
     if(user) {
       const payload = { email: user.email }
-      console.log('payload', payload);
       const token = this.tokenService.generateToken(payload)
-      return token
+      return {
+        accessToken : token,
+        ...user
+      }
     }
-    return 'Invalid username or password'
+    throw new BadRequestException('Invalid username or password')
   }
 
 }

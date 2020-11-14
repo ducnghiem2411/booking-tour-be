@@ -26,12 +26,16 @@ export class ToursService {
   }
 
   async getAll(options: ListTourQuery): Promise<TourDTO[]> {
-    const result = await this.tourModel.aggregate()
-    .match({ country: options.country }, { place: options.place })
+    if (!options) {
+      return await this.tourModel.find()
+    }
+    const result = await this.tourModel
+    .find({ $or: [
+      { country: options.country },
+      { place: options.place }
+    ]})
     .exec()
-    console.log('result', result);
-
-    return await this.tourModel.find()
+    return result
   }
 
   async getTourByPlaceId(id: string): Promise<TourDTO[]> {
