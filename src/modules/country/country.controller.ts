@@ -54,8 +54,7 @@ export class CountriesController {
   
   @Get('/top-destination')
   @ApiOkResponse({ description: 'Return top destination' })
-  async getTopDestination(@Query('total') total: number): Promise<CountryDTO[]> {
-    console.log('total', total);
+  async getTopDestination(): Promise<CountryDTO[]> {
     let result
     try {
       result = await this.countriesService.getTopDestination()

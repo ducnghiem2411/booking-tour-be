@@ -34,12 +34,14 @@ export class CountriesService {
 
   async getTopDestination(): Promise<any> {
     const tour = await this.tourModel.aggregate()
-    .unwind('placeId', 'place')
+    .unwind('countryId', 'country', 'placeId', 'place')
     //group all tour has the same placeId and count
     .group({
-      _id: '$placeId',
+      _id: '$countryId',
+      country: { '$first': '$country' },
+      placeId: { '$first': '$placeId' },
       place: { '$first': '$place' },
-      totalTour: { '$sum': 1 },  
+      totalTour: { '$sum': 1 },
     })
     //highest totalTour 1st
     .sort({ totalTour: -1 })  
@@ -60,7 +62,7 @@ export class CountriesService {
   }
 
   async delete(id: string): Promise<string> {
-    const country =  this.countryModel.findOneAndDelete({ _id: id })
+    const country = await this.countryModel.findOneAndDelete({ _id: id })
     if(country) {
       await this.placeModel.deleteMany({ countryId: country._id })
       await this.tourModel.deleteMany({ countryId: country._id })

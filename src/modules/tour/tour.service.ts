@@ -8,6 +8,8 @@ import { CreateTourDTO, EditTourDTO, ListTourQuery } from './dto/input.dto';
 import { TourDTO } from './dto/output.dto';
 import { Place } from '../place/schemas/place.schema';
 
+import { isEmptyObject } from 'src/shared/helper'
+
 @Injectable()
 export class ToursService {
   constructor(
@@ -20,13 +22,13 @@ export class ToursService {
     if (!place) {
       throw new BadRequestException('Place id or name does not match')
     }
-    const tour = new this.tourModel(payload);
-    await tour.save();
-    return tour;
+    const tour = new this.tourModel(payload)
+    await tour.save()
+    return tour
   }
 
   async getAll(options: ListTourQuery): Promise<TourDTO[]> {
-    if (!options) {
+    if (isEmptyObject(options)) {
       return await this.tourModel.find()
     }
     const result = await this.tourModel
