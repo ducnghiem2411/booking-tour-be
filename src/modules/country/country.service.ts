@@ -44,7 +44,8 @@ export class CountriesService {
       totalTour: { '$sum': 1 },
     })
     //highest totalTour 1st
-    .sort({ totalTour: -1 })  
+    .sort({ totalTour: -1 })
+    .limit(6)
     .exec()
     return tour
   }

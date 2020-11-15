@@ -31,11 +31,21 @@ export class ToursService {
     if (isEmptyObject(options)) {
       return await this.tourModel.find()
     }
+    if (options.limit && options.page) {
+      const limit = Number(options.limit)
+      const page = Number(options.page)
+      return await this.tourModel.find()
+      .sort('checkIn')
+      .skip(limit*page - limit)
+      .limit(limit)
+      .exec()
+    }
     const result = await this.tourModel
     .find({ $or: [
       { country: options.country },
       { place: options.place }
     ]})
+    .sort({ name: 'asc' })
     .exec()
     return result
   }
