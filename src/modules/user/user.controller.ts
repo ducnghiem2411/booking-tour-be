@@ -35,8 +35,21 @@ export class UsersController {
       return result
   }
 
+
+  @Get()
+  @ApiOkResponse({ description: 'Return all user', type: [GetUserDTO] })
+  async getAll(): Promise<User[]> {
+    let result
+    try {
+        result = this.usersService.findAll()
+    } catch (e) {
+        throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
   @Get(':id')
-  @ApiOkResponse({ description: 'Return user', type: CreateUserDTO })
+  @ApiOkResponse({ description: 'Return user', type: GetUserDTO })
   async findById(@Param('id') id: string): Promise<User> {
     let result
     try {

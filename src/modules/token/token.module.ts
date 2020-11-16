@@ -6,7 +6,7 @@ import { TokenService } from './token.service';
   imports: [
     JwtModule.register({
       secret: 'secret-key',
-      signOptions: { expiresIn: '1d' }
+      signOptions: { expiresIn: '1d' },
     })
   ],
   providers: [TokenService],

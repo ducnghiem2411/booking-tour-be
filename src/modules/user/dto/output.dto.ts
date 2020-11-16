@@ -2,9 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail } from 'class-validator';
 
 export class GetUserDTO {
-  firstName: string;
-  lastName: string;
-  age: number;
+  username: string;
   email: string;
-  phone: string;
+}
+
+export class LoggedInDTO {
+  accessToken: string
+  username: string;
+  email: string;
 }

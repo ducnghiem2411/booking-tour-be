@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 
 import { LoginDTO, CreateUserDTO } from './dto/input.dto';
+import { GetUserDTO, LoggedInDTO } from './dto/output.dto';
 
 
 @Injectable()
@@ -26,21 +27,21 @@ export class UsersService {
     return newUser;
   }
 
-  async findById(id: String): Promise<User> {
-    const user = await this.userModel.findById(id).exec();
+  async findById(id: String): Promise<GetUserDTO> {
+    const user = await this.userModel.findById(id).select(['-password'])
     return user
   }
 
-  async login(loginDTO: LoginDTO): Promise<any> {
+  async findAll(): Promise<GetUserDTO[]> {
+    return await this.userModel.find().select(['-password'])
+  }
+
+  async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
     const user = await this.userModel.findOne(loginDTO).select(['-password'])
-    console.log(user)
     if(user) {
-      const payload = { email: user.email }
-      const token = this.tokenService.generateToken(payload)
-      return {
-        accessToken : token,
-        ...user
-      }
+      const payload = { email: user.email, username: user.username }
+      const token = await this.tokenService.generateToken(payload)
+      return { accessToken: token, username: user.username, email: user.email }
     }
     throw new BadRequestException('Invalid username or password')
   }

@@ -7,6 +7,7 @@ import { PlacesModule } from './modules/place/place.module';
 import { CountriesModule } from './modules/country/country.module';
 import { FileModule } from './modules/file/file.module';
 import { BookingModule } from './modules/booking/booking.module';
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BookingModule } from './modules/booking/booking.module';
     PlacesModule,
     ToursModule,
     BookingModule,
+    ReviewModule,
     FileModule,
   ]
 })

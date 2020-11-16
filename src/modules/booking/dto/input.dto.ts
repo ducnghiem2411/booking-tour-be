@@ -1,9 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty } from "class-validator";
 
 export class BookingDTO {
   @ApiProperty()
-  placeId: string
+  @IsNotEmpty()
+  tourId: string
   
   @ApiProperty()
-  place: string
+  @IsNotEmpty()
+  tour: string
 }
