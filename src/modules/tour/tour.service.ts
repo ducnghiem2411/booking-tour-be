@@ -40,11 +40,19 @@ export class ToursService {
       .limit(limit)
       .exec()
     }
+
     const result = await this.tourModel
-    .find({ $or: [
-      { country: options.country },
-      { place: options.place }
-    ]})
+    .find({ 
+      $or: [
+        { country: options.country },
+         {place: options.place },
+      ],
+      $and: [
+        { price: { $lte: Number(options.maxprice) || 999999999999999999999999 } },
+        { price: { $gte: Number(options.maxprice) || 0 } },
+      ],
+      member: { $gte: Number(options.member || 0 ) }
+    })
     .sort({ name: 'asc' })
     .exec()
     return result

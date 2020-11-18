@@ -32,14 +32,14 @@ export class ReviewController {
     return result
   }
 
-  @Get()
+  @Get(':placeId')
   // @ApiBearerAuth()
   // @UseGuards(UserGuard)
   @ApiOkResponse({ description: 'Return all review', type: [ReviewDTO] })
-  async getAll(): Promise<ReviewDTO[]> {
+  async getReviewByPlace(@Param('placeId') id: string): Promise<ReviewDTO[]> {
     let result
     try {
-      result = await this.reviewsService.getAll()
+      result = await this.reviewsService.getReviewByPlace(id)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

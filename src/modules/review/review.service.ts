@@ -2,9 +2,6 @@ import { Injectable, BadRequestException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { Model } from 'mongoose'
-import { Country } from '../country/schemas/country.schema'
-import { Place } from '../place/schemas/place.schema'
-import { Tour } from '../tour/schemas/tour.schema'
 import { Booking } from '../booking/schemas/booking.schema'
 import { Review } from './schemas/review.schema'
 
@@ -29,13 +26,16 @@ export class ReviewService {
     throw new BadRequestException('You have to book this tour to review')
   }
 
-  async getAll(): Promise<ReviewDTO[]> {
-    // -pagination
-    return
+  async getReviewByPlace(id): Promise<ReviewDTO[]> {
+    return await this.reviewModel.find({ placeId: id })
   }
 
   async delete(id: string): Promise<string> {
-    return
+    const reviewToDelete =  await this.reviewModel.findOneAndDelete(id)
+    if (reviewToDelete) {
+      return 'Delete review successfully'
+    }
+    throw new BadRequestException('Id not match')
   }
 
 }

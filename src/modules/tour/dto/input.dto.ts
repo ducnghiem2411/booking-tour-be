@@ -101,17 +101,14 @@ export class ListTourQuery {
   
   @ApiProperty({required: false})
   @IsOptional()
-  @IsNumber()
   member: number
   
   @ApiProperty({required: false})
   @IsOptional()
-  @IsNumber()
   minprice: number
   
   @ApiProperty({required: false})
   @IsOptional()
-  @IsNumber()
   maxprice: number
   
   @ApiProperty({required: false})

@@ -26,15 +26,14 @@ export class UsersController {
 
   @Post('login')
   async login(@Body() body: LoginDTO): Promise<string> {
-      let result
-      try {
-          result = await this.usersService.login(body)
-      } catch (e) {
-        throw new HttpException({...e}, e.statusCode)
-      }
-      return result
+    let result
+    try {
+        result = await this.usersService.login(body)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
   }
-
 
   @Get()
   @ApiOkResponse({ description: 'Return all user', type: [GetUserDTO] })
@@ -53,9 +52,9 @@ export class UsersController {
   async findById(@Param('id') id: string): Promise<User> {
     let result
     try {
-        result = this.usersService.findById(id);
+      result = this.usersService.findById(id);
     } catch (e) {
-        throw new HttpException({...e}, e.statusCode)
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }

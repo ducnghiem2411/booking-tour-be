@@ -32,7 +32,7 @@ export class BookingController {
   }
 
   @Get()
-  @ApiBody({})
+  @ApiOkResponse({ description: 'Return all booked tour by each user' })
   async getAll() {
     let result
     try {
@@ -44,7 +44,7 @@ export class BookingController {
   }
 
   @Delete(':id')
-  @ApiBody({})
+  @ApiOkResponse({ description: 'Delete booked tour' })
   async delete(@Param('id') id) {
     let result
     try {
