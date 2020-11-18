@@ -17,15 +17,15 @@ async function bootstrap() {
   require('dotenv').config();
   console.log('process.env', process.env.MONGODB_URI);
   
-  const ENV = `${process.env.ENV || 'production'}`.toLowerCase();
-  const PORT = process.env.PORT || 8000;
+  const ENV = `${process.env.ENV || 'production'}`.toLowerCase()
+  const PORT = process.env.PORT || 8000
   
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule)
 
   app.useGlobalInterceptors(new TransformInterceptor)
   app.useGlobalFilters(new HttpExceptionFilter)
   app.useGlobalPipes(new ValidationPipe(
-    {whitelist: true}
+    { whitelist: true }
   ))
 
   if (ENV !== 'production') {
@@ -36,21 +36,22 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('/doc', app, document);
+    const document = SwaggerModule.createDocument(app, options)
+    SwaggerModule.setup('/doc', app, document)
   }
   
   // Enable CORS
-  app.enableCors();
+  app.enableCors()
 
-  await app.listen(PORT);
-  console.log(`----------------------------------------`);
-  console.log(`-->           BOOKING TOUR           <--`);
-  console.log(`----------------------------------------`);
-  console.log(tableRow(PORT, 'PORT'));
-  console.log(`----------------------------------------`);
+  await app.listen(PORT)
+
+  console.log(`----------------------------------------`)
+  console.log(`-->           BOOKING TOUR           <--`)
+  console.log(`----------------------------------------`)
+  console.log(tableRow(PORT, 'PORT'))
+  console.log(`----------------------------------------`)
 
 }
 
-bootstrap();
+bootstrap()
 
