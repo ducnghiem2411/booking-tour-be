@@ -38,7 +38,6 @@ export class ToursController {
   @Get()
   @ApiOkResponse({ description: 'Return all tour', type: [TourDTO] })
   async getAll(@Query() options: ListTourQuery): Promise<TourDTO[]> {
-    console.log('options', options);
     let result
     try {
       result = this.toursService.getAll(options)

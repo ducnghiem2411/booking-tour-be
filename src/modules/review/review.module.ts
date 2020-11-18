@@ -3,12 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose'
 
 import { AuthModule } from '../auth/auth.module'
 import { TokenModule } from '../token/token.module'
-import { BookingModule } from '../booking/booking.module';
+import { BookingModule } from '../booking/booking.module'
 import { ReviewController } from './review.controller'
 import { ReviewService } from './review.service'
 
 import { Booking, BookingSchema } from '../booking/schemas/booking.schema'
-import { Review, ReviewSchema } from './schemas/review.schema';
+import { Review, ReviewSchema } from './schemas/review.schema'
 
 @Module({
   imports: [

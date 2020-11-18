@@ -1,23 +1,23 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
-import { Country } from 'src/modules/country/schemas/country.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Document, Schema as MongooseSchema } from 'mongoose'
+import { Country } from 'src/modules/country/schemas/country.schema'
 
 @Schema()
 export class Place extends Document {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Country.name })
-  countryId: Country;
+  countryId: Country
 
   @Prop()
   country: string
   
   @Prop()
-  name: string;
+  name: string
 
   @Prop()
-  description: string;
+  description: string
 
   @Prop()
-  image: string;
+  image: string
 }
 
-export const PlaceSchema = SchemaFactory.createForClass(Place);
+export const PlaceSchema = SchemaFactory.createForClass(Place)

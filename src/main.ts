@@ -1,10 +1,17 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
-import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './shared/exception-filter';
-import { TransformInterceptor } from './shared/response-interceptor';
+import { AppModule } from './app.module'
+import { HttpExceptionFilter } from './shared/exception-filter'
+import { TransformInterceptor } from './shared/response-interceptor'
+
+const tableRow = (value: string | number, title?: string): string => {
+  let spaces = 40 - `${value}`.length
+  if (title) spaces -= `${title}`.length
+  if (spaces < 0) spaces = 0
+  return `${title || ''}${' '.repeat(spaces)}${value}`
+}
 
 async function bootstrap() {
   require('dotenv').config();
@@ -37,7 +44,13 @@ async function bootstrap() {
   app.enableCors();
 
   await app.listen(PORT);
-  console.log(`App is listening on PORT ${PORT}`)
+  console.log(`----------------------------------------`);
+  console.log(`-->           BOOKING TOUR           <--`);
+  console.log(`----------------------------------------`);
+  console.log(tableRow(PORT, 'PORT'));
+  console.log(`----------------------------------------`);
+
 }
+
 bootstrap();
 

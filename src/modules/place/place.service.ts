@@ -1,13 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, BadRequestException } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
-import { Model } from 'mongoose';
-import { Place } from './schemas/place.schema';
-import { Country } from '../country/schemas/country.schema';
+import { Model } from 'mongoose'
+import { Place } from './schemas/place.schema'
+import { Country } from '../country/schemas/country.schema'
 
-import { PlaceDTO } from './dto/output.dto';
-import { EditPlaceDTO, CreatePlaceDTO } from './dto/input.dto';
-import { Tour } from '../tour/schemas/tour.schema';
+import { PlaceDTO } from './dto/output.dto'
+import { EditPlaceDTO, CreatePlaceDTO } from './dto/input.dto'
+import { Tour } from '../tour/schemas/tour.schema'
 
 @Injectable()
 export class PlacesService {
@@ -18,7 +18,7 @@ export class PlacesService {
   ) {}
 
   async create(payload: CreatePlaceDTO): Promise<PlaceDTO> {
-    const country = await this.countryModel.findOne({ _id: payload.countryId, name: payload.country})
+    const country = await this.countryModel.findOne({ _id: payload.countryId, name: payload.country })
     if (!country) {
       throw new BadRequestException('Country id or name does not match')
     }
@@ -41,7 +41,7 @@ export class PlacesService {
   }
 
   async edit(id: string, payload: EditPlaceDTO): Promise<any> {
-    const editedPlace = await this.placeModel.findByIdAndUpdate(id, payload, {new: true})
+    const editedPlace = await this.placeModel.findByIdAndUpdate(id, payload, { new: true })
     if (!editedPlace) {
       throw new BadRequestException('Id not match')
     }
@@ -50,7 +50,7 @@ export class PlacesService {
 
   async delete(id: string): Promise<string> {
     const place = await this.placeModel.findOneAndDelete({ _id: id })
-    if(place) {
+    if (place) {
       await this.tourModel.deleteMany({ placeId: id })
       return 'place was deleted'
     }

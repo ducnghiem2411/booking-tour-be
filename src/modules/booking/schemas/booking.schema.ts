@@ -17,4 +17,4 @@ export class Booking extends Document {
   createdAt: Date
 }
 
-export const BookingSchema = SchemaFactory.createForClass(Booking);
+export const BookingSchema = SchemaFactory.createForClass(Booking)

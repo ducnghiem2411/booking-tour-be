@@ -17,7 +17,6 @@ export class ReviewService {
 
   async create(user, payload: CreateReviewDTO): Promise<ReviewDTO> {
     const booking = this.bookingModel.findOne({ username: user.username, tourId: payload.tourId })
-    console.log('payload', payload);
     if (booking) {
       const newReview = new this.reviewModel({ username: user.username, ...payload })
       await newReview.save()

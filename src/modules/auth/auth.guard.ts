@@ -1,6 +1,6 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common'
 
-import { TokenService } from '../token/token.service';
+import { TokenService } from '../token/token.service'
 
 @Injectable()
 export class UserGuard implements CanActivate {
@@ -14,7 +14,6 @@ export class UserGuard implements CanActivate {
     if (authHeader) {
       const token = authHeader.split(' ')[1]
       const payload = await this.tokenService.getPayload(token)
-      console.log('payload', payload);
       if (payload) {
         return true
       }

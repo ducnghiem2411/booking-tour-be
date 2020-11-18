@@ -6,6 +6,7 @@ import { BookingService } from './booking.service'
 
 import { BookingDTO } from './dto/input.dto'
 import { TokenService } from '../token/token.service'
+import { BookedDTO } from './dto/output.dto'
 
 @ApiTags('Booking')
 @Controller('booking')
@@ -24,7 +25,7 @@ export class BookingController {
     const token = req.headers.authorization.split(' ')[1]
     const user = await this.tokenService.getPayload(token)
     try {
-      result = await this.bookingService.create(user, body);
+      result = await this.bookingService.create(user, body)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
@@ -33,7 +34,7 @@ export class BookingController {
 
   @Get()
   @ApiOkResponse({ description: 'Return all booked tour by each user' })
-  async getAll() {
+  async getAll(): Promise<BookedDTO[]> {
     let result
     try {
       result = await this.bookingService.getAll()
@@ -45,7 +46,7 @@ export class BookingController {
 
   @Delete(':id')
   @ApiOkResponse({ description: 'Delete booked tour' })
-  async delete(@Param('id') id) {
+  async delete(@Param('id') id: string) {
     let result
     try {
       result = await this.bookingService.delete(id)

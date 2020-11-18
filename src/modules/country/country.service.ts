@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose'
 
 import { Model } from 'mongoose'
 import { Country } from './schemas/country.schema'
-import { Place } from '../place/schemas/place.schema';
-import { Tour } from '../tour/schemas/tour.schema';
+import { Place } from '../place/schemas/place.schema'
+import { Tour } from '../tour/schemas/tour.schema'
 
 import { CountryDTO } from './dto/output.dto'
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
@@ -64,7 +64,7 @@ export class CountriesService {
 
   async delete(id: string): Promise<string> {
     const country = await this.countryModel.findOneAndDelete({ _id: id })
-    if(country) {
+    if (country) {
       await this.placeModel.deleteMany({ countryId: country._id })
       await this.tourModel.deleteMany({ countryId: country._id })
       return 'Country was deleted'

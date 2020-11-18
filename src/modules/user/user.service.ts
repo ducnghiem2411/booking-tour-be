@@ -1,13 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, BadRequestException } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
-import { TokenService } from '../token/token.service';
+import { TokenService } from '../token/token.service'
 
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { Model } from 'mongoose'
+import { User } from './schemas/user.schema'
 
-import { LoginDTO, CreateUserDTO } from './dto/input.dto';
-import { GetUserDTO, LoggedInDTO } from './dto/output.dto';
+import { LoginDTO, CreateUserDTO } from './dto/input.dto'
+import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
 
 
 @Injectable()
@@ -18,13 +18,15 @@ export class UsersService {
   ) {}
 
   async create(body: CreateUserDTO): Promise<User> {
-    const user = await this.userModel.findOne({$or: [{email: body.email}, {username: body.username}]})
+    const user = await this.userModel.findOne({ 
+      $or: [{ email: body.email }, { username: body.username }] 
+    })
     if (user) {
       throw new BadRequestException('Username or email is already used')
     }
-    const newUser = new this.userModel(body);
-    await newUser.save();
-    return newUser;
+    const newUser = new this.userModel(body)
+    await newUser.save()
+    return newUser
   }
 
   async findById(id: String): Promise<GetUserDTO> {
@@ -38,7 +40,7 @@ export class UsersService {
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
     const user = await this.userModel.findOne(loginDTO).select(['-password'])
-    if(user) {
+    if (user) {
       const payload = { email: user.email, username: user.username }
       const token = await this.tokenService.generateToken(payload)
       return { accessToken: token, username: user.username, email: user.email }

@@ -1,7 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-import { FilesController } from './file.controller';
-
+import { FilesController } from './file.controller'
 
 @Module({
   imports: [],

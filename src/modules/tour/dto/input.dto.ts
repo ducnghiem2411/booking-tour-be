@@ -1,11 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsMongoId, IsOptional, IsString, IsNumber, IsDate } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsMongoId, IsOptional, IsString } from 'class-validator'
 
 export class CreateTourDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsMongoId()
-  placeId: string;
+  placeId: string
 
   @ApiProperty()
   @IsNotEmpty()
@@ -22,64 +22,63 @@ export class CreateTourDTO {
 
   @ApiProperty()
   @IsNotEmpty()
-  name: string;
+  name: string
 
   @ApiProperty()
   @IsNotEmpty()
-  checkIn: Date;
+  checkIn: Date
 
   @ApiProperty()
   @IsNotEmpty()
-  checkOut: Date;
+  checkOut: Date
 
   @ApiProperty()
   @IsNotEmpty()
-  member: number;
+  member: number
 
   @ApiProperty()
   @IsNotEmpty()
-  price: number;
+  price: number
 
   @ApiProperty()
   @IsNotEmpty()
   description: string 
 
   @ApiProperty()
-  images: Array<string>;
+  images: Array<string>
 }
 
 export class EditTourDTO {
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  name?: string;
+  name?: string
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  checkIn?: Date;
+  checkIn?: Date
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  checkOut?: Date;
+  checkOut?: Date
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  member?: number;
+  member?: number
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  price?: number;
+  price?: number
 
   @ApiProperty()
   @IsOptional()
   @IsNotEmpty()
-  images?: Array<string>;
+  images?: Array<string>
 }
-
 export class ListTourQuery {
   @ApiProperty({required: false})
   @IsOptional()

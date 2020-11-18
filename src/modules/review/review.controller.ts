@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post, HttpException, Param, Delete, Req, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Delete, Req, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger'
 
 import { UserGuard } from '../auth/auth.guard'
 import { ReviewService } from './review.service'
@@ -17,7 +17,6 @@ export class ReviewController {
   ) {}
   
   @Post()
-  // @ApiBody({ schema: CreateReviewDTO })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'Return created reviews', type: CreateReviewDTO })
   async create(@Req() req, @Body() body: CreateReviewDTO): Promise<CreateReviewDTO> {
@@ -25,7 +24,7 @@ export class ReviewController {
     const token = req.headers.authorization.split(' ')[1]
     const user = await this.tokenService.getPayload(token)
     try {
-      result = await this.reviewsService.create(user, body);
+      result = await this.reviewsService.create(user, body)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

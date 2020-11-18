@@ -1,12 +1,12 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, BadRequestException } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 
-import { Model } from 'mongoose';
-import { Tour } from './schemas/tour.schema';
+import { Model } from 'mongoose'
+import { Tour } from './schemas/tour.schema'
 
-import { CreateTourDTO, EditTourDTO, ListTourQuery } from './dto/input.dto';
-import { TourDTO } from './dto/output.dto';
-import { Place } from '../place/schemas/place.schema';
+import { CreateTourDTO, EditTourDTO, ListTourQuery } from './dto/input.dto'
+import { TourDTO } from './dto/output.dto'
+import { Place } from '../place/schemas/place.schema'
 
 import { isEmptyObject } from 'src/shared/helper'
 
@@ -64,7 +64,7 @@ export class ToursService {
 
   async delete(id: string): Promise<string> {
     const tour = await this.tourModel.deleteOne({ _id: id })
-    if(tour.deletedCount !== 0) {
+    if (tour.deletedCount !== 0) {
       return 'tour was deleted'
     }
     return 'no tour matched'

@@ -1,10 +1,8 @@
-import { Body, Controller, Get, Post, HttpException, Param, Request, Req } from '@nestjs/common';
-import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { UsersService } from './user.service';
+import { Body, Controller, Get, Post, HttpException, Param, Request, Req } from '@nestjs/common'
+import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+import { UsersService } from './user.service'
 
-import { User } from './schemas/user.schema';
-
-import { GetUserDTO } from './dto/output.dto';
+import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
 import { LoginDTO, CreateUserDTO } from './dto/input.dto'
 
 @Controller('users')
@@ -25,7 +23,7 @@ export class UsersController {
   }
 
   @Post('login')
-  async login(@Body() body: LoginDTO): Promise<string> {
+  async login(@Body() body: LoginDTO): Promise<LoggedInDTO> {
     let result
     try {
       result = await this.usersService.login(body)
@@ -37,7 +35,7 @@ export class UsersController {
 
   @Get()
   @ApiOkResponse({ description: 'Return all user', type: [GetUserDTO] })
-  async getAll(): Promise<User[]> {
+  async getAll(): Promise<GetUserDTO[]> {
     let result
     try {
         result = this.usersService.findAll()
@@ -62,7 +60,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOkResponse({ description: 'Return user', type: GetUserDTO })
-  async findById(@Param('id') id: string): Promise<User> {
+  async findById(@Param('id') id: string): Promise<GetUserDTO> {
     let result
     try {
       result = this.usersService.findById(id);

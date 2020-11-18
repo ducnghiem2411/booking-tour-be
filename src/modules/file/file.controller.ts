@@ -5,7 +5,6 @@ import { ApiTags } from '@nestjs/swagger'
 @Controller('upload')
 export class FilesController {
   constructor(
-
   ) {}
 
   @Get('/:name')
@@ -13,9 +12,7 @@ export class FilesController {
     try {
       res.sendFile(name, { root: 'upload' })
     } catch (e) {
-      throw new HttpException({
-        ...e,
-      }, e.statusCode)
+      throw new HttpException({ ...e }, e.statusCode)
     }
   }
 

@@ -1,7 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
-import { Place } from 'src/modules/place/schemas/place.schema';
-import { Country } from 'src/modules/country/schemas/country.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { Document, Schema as MongooseSchema } from 'mongoose'
+import { Place } from 'src/modules/place/schemas/place.schema'
+import { Country } from 'src/modules/country/schemas/country.schema'
 
 
 @Schema()
@@ -13,31 +13,31 @@ export class Tour extends Document {
   country: string
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: Place.name })
-  placeId: Place;
+  placeId: Place
 
   @Prop()
   place: string
   
   @Prop()
-  name: string;
+  name: string
 
   @Prop()
-  checkIn: string;
+  checkIn: string
 
   @Prop()
-  checkOut: string;
+  checkOut: string
 
   @Prop()
-  price: number;
+  price: number
 
   @Prop()
-  member: number;
+  member: number
 
   @Prop()
   description: string
 
   @Prop()
-  images: Array<string>;
+  images: Array<string>
 }
 
-export const TourSchema = SchemaFactory.createForClass(Tour);
+export const TourSchema = SchemaFactory.createForClass(Tour)

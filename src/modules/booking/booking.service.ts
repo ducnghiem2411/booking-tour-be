@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose'
 
 import { Model } from 'mongoose'
 import { Booking } from './schemas/booking.schema'
-import { Tour } from '../tour/schemas/tour.schema'
 
 import { BookingDTO } from './dto/input.dto'
 

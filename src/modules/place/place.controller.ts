@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFile, Req, UseGuards } from '@nestjs/common';
-import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFile, Req, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 
-import { UserGuard } from '../auth/auth.guard';
-import { PlacesService } from './place.service';
+import { UserGuard } from '../auth/auth.guard'
+import { PlacesService } from './place.service'
 
 import { bodyEditPlace, bodyCreatePlace } from './schemas/api-doc.schema'
-import { CreatePlaceDTO, EditPlaceDTO } from './dto/input.dto';
+import { CreatePlaceDTO, EditPlaceDTO } from './dto/input.dto'
 import { PlaceDTO } from './dto/output.dto'
 @ApiTags('Places')
 @Controller('places')
@@ -29,9 +29,9 @@ export class PlacesController {
       payload.image = imageUrl
     }
     try {
-        result = await this.placesService.create(payload);
+      result = await this.placesService.create(payload)
     } catch (e) {
-        throw new HttpException({...e}, e.statusCode)
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }

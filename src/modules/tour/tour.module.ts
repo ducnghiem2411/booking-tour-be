@@ -9,7 +9,7 @@ import { ToursService } from './tour.service'
 import { ToursController } from './tour.controller'
 
 import { Tour, TourSchema } from './schemas/tour.schema'
-import { Place, PlaceSchema } from '../place/schemas/place.schema';
+import { Place, PlaceSchema } from '../place/schemas/place.schema'
 
 @Module({
   imports: [
@@ -27,4 +27,5 @@ import { Place, PlaceSchema } from '../place/schemas/place.schema';
   providers: [ToursService],
   exports: [ToursService]
 })
+
 export class ToursModule {}

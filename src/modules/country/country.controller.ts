@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, HttpException, Param, Put, UseInterceptors
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOkResponse, ApiBody, ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger'
 
-import { UserGuard, AdminGuard } from 'src/modules/auth/auth.guard';
+import { UserGuard, AdminGuard } from 'src/modules/auth/auth.guard'
 import { CountriesService } from './country.service'
 
 import { bodyCreateCountry, bodyEditCountry } from './schemas/api-doc.schema'
@@ -30,7 +30,7 @@ export class CountriesController {
       payload.image = imageUrl
     }
     try {
-      result = await this.countriesService.create(payload);
+      result = await this.countriesService.create(payload)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
