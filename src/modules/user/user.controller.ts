@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, HttpException, Param, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post, HttpException, Param, Request, Req } from '@nestjs/common';
 import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './user.service';
 
@@ -28,7 +28,7 @@ export class UsersController {
   async login(@Body() body: LoginDTO): Promise<string> {
     let result
     try {
-        result = await this.usersService.login(body)
+      result = await this.usersService.login(body)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
@@ -43,6 +43,19 @@ export class UsersController {
         result = this.usersService.findAll()
     } catch (e) {
         throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Get('update-login')
+  @ApiBearerAuth()
+  async updateLogin (@Req() req) {
+    let result
+    const token = req.headers.authorization.split(' ')[1]
+    try {
+        result = await this.usersService.updateLogin(token)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
