@@ -16,8 +16,12 @@ export class ReviewService {
   ) {}
 
   async create(user, payload: CreateReviewDTO): Promise<ReviewDTO> {
-    const booking = this.bookingModel.findOne({ username: user.username, tourId: payload.tourId })
+    const booking = await this.bookingModel.findOne({ username: user.username, tourId: payload.tourId })
     if (booking) {
+      const review = await this.reviewModel.findOne({ username: user.username, tourId: payload.tourId })
+      if (review) {
+        throw new BadRequestException('You reviewed this tour')
+      }
       const newReview = new this.reviewModel({ username: user.username, ...payload })
       await newReview.save()
       return newReview
