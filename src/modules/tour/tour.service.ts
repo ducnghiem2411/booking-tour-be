@@ -40,17 +40,23 @@ export class ToursService {
       .limit(limit)
       .exec()
     }
-
+    console.log('date', new Date(options.checkin)) 
+    if (options.minprice) {
+      options.minprice = Number(options.minprice)
+    }
     const result = await this.tourModel
     .find({ 
       $or: [
         { country: options.country },
-         {place: options.place },
+        { place: options.place },
       ],
-      $and: [
-        { price: { $lte: Number(options.maxprice) || 999999999999999999999999 } },
-        { price: { $gte: Number(options.maxprice) || 0 } },
-      ],
+      price: {
+        $gte: options.minprice,
+        $lte: options.maxprice
+      }
+      ,
+      checkIn: { $gte: { $date : options.checkin } },
+      // checkOut: { $lte: new Date(options.checkout) },
       member: { $gte: Number(options.member || 0 ) }
     })
     .sort({ name: 'asc' })

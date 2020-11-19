@@ -45,7 +45,7 @@ export class UsersService {
       const token = await this.tokenService.generateToken(payload)
       return { accessToken: token, username: user.username, email: user.email }
     }
-    throw new BadRequestException('Invalid username or password')
+    throw new BadRequestException('Email or password not match')
   }
 
   async updateLogin(token): Promise<LoggedInDTO> {

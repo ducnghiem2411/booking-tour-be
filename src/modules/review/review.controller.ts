@@ -31,10 +31,24 @@ export class ReviewController {
     return result
   }
 
-  @Get(':placeId')
+  @Get()
   // @ApiBearerAuth()
   // @UseGuards(UserGuard)
   @ApiOkResponse({ description: 'Return all review', type: [ReviewDTO] })
+  async getAll(): Promise<ReviewDTO[]> {
+    let result
+    try {
+      result = await this.reviewsService.getRandom()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Get(':placeId')
+  // @ApiBearerAuth()
+  // @UseGuards(UserGuard)
+  @ApiOkResponse({ description: 'Return all review by place Id', type: [ReviewDTO] })
   async getReviewByPlace(@Param('placeId') id: string): Promise<ReviewDTO[]> {
     let result
     try {

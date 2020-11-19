@@ -37,4 +37,8 @@ export class ReviewService {
     throw new BadRequestException('Id not match')
   }
 
+  async getRandom(): Promise<ReviewDTO[]> {
+    return await this.reviewModel.find()
+  }
+
 }
