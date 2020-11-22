@@ -9,6 +9,7 @@ import { TourDTO } from './dto/output.dto'
 import { Place } from '../place/schemas/place.schema'
 
 import { isEmptyObject } from 'src/shared/helper'
+import { totalmem } from 'os';
 
 @Injectable()
 export class ToursService {
@@ -27,18 +28,20 @@ export class ToursService {
     return tour
   }
 
-  async getAll(options: ListTourQuery): Promise<TourDTO[]> {
+  async getAll(options: ListTourQuery): Promise<any> {
     if (isEmptyObject(options)) {
       return await this.tourModel.find()
     }
     if (options.limit && options.page) {
       const limit = Number(options.limit)
-      const page = Number(options.page)
-      return await this.tourModel.find()
+      const page = Number(options.page) 
+      const tours = await this.tourModel.find()
       .sort('checkIn')
       .skip(limit*page - limit)
       .limit(limit)
       .exec()
+      const total = await this.tourModel.find().estimatedDocumentCount().exec()
+      return { totalTour: total, page: page, perPage: limit, tours: [...tours] }
     }
     console.log('date', new Date(options.checkin)) 
     if (options.minprice) {
