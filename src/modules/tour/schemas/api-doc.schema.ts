@@ -10,6 +10,7 @@ export const bodyCreateTour = {
     checkOut: { type: 'Date' },
     price: { type: 'number' },
     member: { type: 'number' },
+    description: { type: 'string' },
     images: { type: 'array', items: { type: 'string', format: 'binary' }}
   }
 }

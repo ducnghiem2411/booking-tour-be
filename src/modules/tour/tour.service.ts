@@ -45,20 +45,16 @@ export class ToursService {
       return { totalTour: total, page: page, perPage: limit, tours: [...tours] }
     }
 
-    const filter = {
-      // country: options.country,
-      // place: options.place,
-      // price: {
-      //   $gte: options.minprice || 0,
-      //   $lte: options.maxprice || 9999999999
-      // },
-      checkIn: { $gte: options.checkin || new Date('1000-01-01') },
-      checkOut: { $lte: options.checkout || new Date('9999-01-01') },
-      // member: { $gte: Number(options.member) || 0 }
-    }
-    console.log(filter);
     const result = await this.tourModel
-    .find({...filter})
+    .find({
+      country: options.country,
+      place: options.place,
+      price: {
+        $gte: options.minprice || 0,
+        $lte: options.maxprice || 9999999999
+      },
+      member: { $gte: Number(options.member) || 0 }
+    })
     .sort({ name: 'asc' })
     .exec()
     return result
@@ -89,3 +85,6 @@ export class ToursService {
   }
 
 }
+
+// checkIn: { $gte: new Date(options.checkin) || new Date('1000-01-01') }
+// checkOut: { $lte: new Date(options.checkout) || new Date('9999-01-01') },
