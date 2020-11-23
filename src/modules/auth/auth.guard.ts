@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common'
 
 import { TokenService } from '../token/token.service'
-
+import { su } from 'src/config'
 @Injectable()
 export class UserGuard implements CanActivate {
   constructor(
@@ -35,7 +35,7 @@ export class AdminGuard implements CanActivate {
     if (authHeader) {
       const token = authHeader.split(' ')[1]
       const payload = await this.tokenService.getPayload(token)
-      if (payload.email === 'nghiemld@gmail.com') { //temporary
+      if (su.includes(payload.email)) {
         return true
       }
     }

@@ -1,0 +1,12 @@
+// Don't forget to disable less secure app from Gmail at: 
+// https://myaccount.google.com/lesssecureapps
+export const mailer = {
+  service: 'gmail',
+  user: 'your.email@gmail.com',
+  password: 'your.password'
+}
+
+//Admin accounts
+export const su: Array<string> = [
+  
+]

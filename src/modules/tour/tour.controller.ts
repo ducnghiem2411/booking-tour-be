@@ -59,27 +59,25 @@ export class ToursController {
     return result
   }
 
-  @Get('/place-id/:id')
-  @ApiOkResponse({ description: 'Return tour by place id'})
-  async getTourByPlaceId(@Param('id') placeId: string): Promise<any> {
+  @Put(':id')
+  @ApiBody({ description: 'Edit tour', schema: bodyEditTour })
+  @ApiOkResponse({ description: 'Return edited tour', type: TourDTO })
+  async edit(@Param('id') id: string, @Body() body: EditTourDTO): Promise<TourDTO> {
     let result
     try {
-      result = await this.toursService.getTourByPlaceId(placeId)
+      result = await this.toursService.edit(id, body)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
   
-  @Put(':id')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ description: 'Edit tour', schema: bodyEditTour })
-  @ApiOkResponse({ description: 'Return edited tour', type: TourDTO })
-  async edit(@Param('id') id: string, @Body() body: EditTourDTO): Promise<TourDTO> {
+  @Get('/place-id/:id')
+  @ApiOkResponse({ description: 'Return tour by place id'})
+  async getTourByPlaceId(@Param('id') placeId: string): Promise<any> {
     let result
-    let payload = body
     try {
-      result = await this.toursService.edit(id, payload)
+      result = await this.toursService.getTourByPlaceId(placeId)
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

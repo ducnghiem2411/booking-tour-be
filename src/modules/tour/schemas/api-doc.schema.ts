@@ -22,6 +22,5 @@ export const bodyEditTour = {
     checkOut: { type: 'Date' },
     price: { type: 'number' },
     member: { type: 'number' },
-    images: { type: 'array', items: { type: 'string', format: 'binary' }}
   }
 }

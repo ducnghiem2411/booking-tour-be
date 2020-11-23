@@ -8,8 +8,7 @@ import { CreateTourDTO, EditTourDTO, ListTourQuery } from './dto/input.dto'
 import { TourDTO } from './dto/output.dto'
 import { Place } from '../place/schemas/place.schema'
 
-import { isEmptyObject } from 'src/shared/helper'
-import { totalmem } from 'os';
+import { isEmpty, pickBy, identity } from 'lodash'
 
 @Injectable()
 export class ToursService {
@@ -23,13 +22,15 @@ export class ToursService {
     if (!place) {
       throw new BadRequestException('Place id or name does not match')
     }
+    payload.checkIn = new Date(payload.checkIn)
+    payload.checkOut = new Date(payload.checkOut)
     const tour = new this.tourModel(payload)
     await tour.save()
     return tour
   }
 
   async getAll(options: ListTourQuery): Promise<any> {
-    if (isEmptyObject(options)) {
+    if (isEmpty(options)) {
       return await this.tourModel.find()
     }
     if (options.limit && options.page) {
@@ -43,25 +44,21 @@ export class ToursService {
       const total = await this.tourModel.find().estimatedDocumentCount().exec()
       return { totalTour: total, page: page, perPage: limit, tours: [...tours] }
     }
-    console.log('date', new Date(options.checkin)) 
-    if (options.minprice) {
-      options.minprice = Number(options.minprice)
+
+    const filter = {
+      // country: options.country,
+      // place: options.place,
+      // price: {
+      //   $gte: options.minprice || 0,
+      //   $lte: options.maxprice || 9999999999
+      // },
+      checkIn: { $gte: options.checkin || new Date('1000-01-01') },
+      checkOut: { $lte: options.checkout || new Date('9999-01-01') },
+      // member: { $gte: Number(options.member) || 0 }
     }
+    console.log(filter);
     const result = await this.tourModel
-    .find({ 
-      $or: [
-        { country: options.country },
-        { place: options.place },
-      ],
-      price: {
-        $gte: options.minprice,
-        $lte: options.maxprice
-      }
-      ,
-      checkIn: { $gte: { $date : options.checkin } },
-      // checkOut: { $lte: new Date(options.checkout) },
-      member: { $gte: Number(options.member || 0 ) }
-    })
+    .find({...filter})
     .sort({ name: 'asc' })
     .exec()
     return result
@@ -84,7 +81,7 @@ export class ToursService {
   }
 
   async edit(id: string, payload: EditTourDTO): Promise<string> {
-    const editedTour = await this.placeModel.findByIdAndUpdate(id, payload, {new: true})
+    const editedTour = await this.tourModel.findByIdAndUpdate(id, payload, {new: true})
     if (!editedTour) {
       throw new BadRequestException('Id not match')
     }

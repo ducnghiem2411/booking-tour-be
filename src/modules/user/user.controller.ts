@@ -9,7 +9,7 @@ import { LoginDTO, CreateUserDTO } from './dto/input.dto'
 @ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
+  
   @Post()
   @ApiOkResponse({ description: 'Return created user', type: CreateUserDTO })
   async create(@Body() body: CreateUserDTO): Promise<CreateUserDTO> {
@@ -32,6 +32,28 @@ export class UsersController {
     }
     return result
   }
+
+  @Post('forget-password')
+  async forgetPassword(@Body() email: string): Promise<any> {
+    let result
+    try {
+      result = await this.usersService.forgetPassword(email)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  // @Get('/reset/token')
+  // async resetPasswordResponse(): Promise<string> {
+  //   let result
+  //   try {
+  //     result = await this.usersService.forgetPassword(email)
+  //   } catch (e) {
+  //     throw new HttpException({...e}, e.statusCode)
+  //   }
+  //   return result
+  // }
 
   @Get()
   @ApiOkResponse({ description: 'Return all user', type: [GetUserDTO] })

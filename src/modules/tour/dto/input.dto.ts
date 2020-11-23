@@ -73,11 +73,6 @@ export class EditTourDTO {
   @IsOptional()
   @IsNotEmpty()
   price?: number
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNotEmpty()
-  images?: Array<string>
 }
 export class ListTourQuery {
   @ApiProperty({required: false})

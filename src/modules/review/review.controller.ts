@@ -59,6 +59,18 @@ export class ReviewController {
     return result
   }
 
+  @Delete()
+  @ApiOkResponse({ description: 'Delete all review' })
+  async deleteAll(): Promise<string> {
+    let result
+    try {
+      result = await this.reviewsService.deleteAll()
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
   @Delete(':id')
   @ApiOkResponse({ description: 'Return deleted review' })
   async delete(@Req() req, @Param('id') id: string): Promise<string> {

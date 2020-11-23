@@ -41,6 +41,10 @@ export class ReviewService {
     throw new BadRequestException('Id not match')
   }
 
+  async deleteAll() {
+    return await this.reviewModel.deleteMany()
+  }
+
   async getRandom(): Promise<ReviewDTO[]> {
     return await this.reviewModel.find()
   }
