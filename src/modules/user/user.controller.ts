@@ -34,6 +34,7 @@ export class UsersController {
   }
 
   @Put('password')
+  @ApiBearerAuth()
   async changePassword(@Body() body: ChangePasswordDTO, @Req() req): Promise<any> {
     let result
     const token = req.headers.authorization.split(' ')[1]
