@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common'
+import { Injectable, BadRequestException, InternalServerErrorException, ForbiddenException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { generate } from 'generate-password'
 
@@ -8,9 +8,9 @@ import { TokenService } from '../token/token.service'
 import { Model } from 'mongoose'
 import { User } from './schemas/user.schema'
 
-import { LoginDTO, CreateUserDTO } from './dto/input.dto'
+import { LoginDTO, CreateUserDTO, ChangePasswordDTO, ResetPasswordDTO } from './dto/input.dto'
 import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
-
+import { forgetPasswordMail, forgetPasswordResponseMail, createAccountMail } from './constant';
 
 @Injectable()
 export class UsersService {
@@ -23,20 +23,11 @@ export class UsersService {
     const user = await this.userModel.findOne({ 
       $or: [{ email: body.email }, { username: body.username }] 
     })
-    // if (user) {
-    //   throw new BadRequestException('Username or email is already used')
-    // }
-    const mailExec = await sendMail({
-      from: 'nesttour@gmail.com',
-      to: body.email,
-      subject: 'Nest tour confirm registration',
-      text : `
-      <h1>Welcome to nest tour</h1>
-      Thank you ${body.username} for registering! 
-      Please click this follow link to active your account
-      `
-    })
-    if (mailExec) {
+    if (user) {
+      throw new BadRequestException('Username or email is already used')
+    }
+    const registerMail = await sendMail(createAccountMail(user.email, user.username))
+    if (registerMail) {
       const newUser = new this.userModel(body)
       await newUser.save()
       return newUser
@@ -69,17 +60,48 @@ export class UsersService {
     return { accessToken: newToken, username: payload.username, email: payload.email }
   }
 
-  async forgetPassword(email): Promise<string> {
-    const userEmail = this.userModel.findOne({ email: email })
-    if (userEmail) {
-      const newPassword = generate({
-        length: 10,
-        numbers: true
-      })
+  async changePassword(body: ChangePasswordDTO, token) {
+    const payload = await this.tokenService.getPayload(token)
+    const user = await this.userModel.findOneAndUpdate(
+      { password: body.oldPassword, email: payload.email }, 
+      { password: body.newPassword }
+    )
+    if (user) {
+      return 'Change password successfully'
+    }
+    throw new ForbiddenException('Password not match')
+  }
 
-      return 'Check your email'
-    } 
-    return ''
-  } 
+  async forgetPassword(payload: ResetPasswordDTO, host): Promise<string> {
+    console.log('email', payload);
+    const token = await this.tokenService.generateToken({ email: payload.email }, 60*5)
+    const user = await this.userModel.findOneAndUpdate({ email: payload.email }, { resetPasswordToken: token })
+    console.log('user', user);
+    if (user) {
+      //token expired in 5 minutes
+      const url = `http://${host}/users/reset/password/${token}`
+      const confirmResetPasswordMail = await sendMail(forgetPasswordMail(user.email, url))
+      if (confirmResetPasswordMail) {
+        return 'Check your email'
+      }
+    }
+    return 'Account does not existed'
+  }
+
+  async forgetPasswordResponse(token: string): Promise<any> {
+    // const payload = await this.tokenService.getPayload(token)
+    // console.log('payload', payload);
+    const user = await this.userModel.findOneAndUpdate(
+      { resetPasswordToken: token }, 
+      { password: generate({length: 10, numbers: true}) }, 
+      { new: true }
+    )
+    if (user) {
+      const newPasswordMail = await sendMail(forgetPasswordResponseMail(user.email, user.password))
+      console.log('newPasswordMail', newPasswordMail);
+      return 'Reset password successfully'
+    }
+    throw new InternalServerErrorException()
+  }
 
 }

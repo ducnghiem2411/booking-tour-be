@@ -14,9 +14,10 @@ class SendMailOptions {
   @IsNotEmpty()
   subject: string
 
-  @IsNotEmpty()
-  text: string
-} 
+  text?: string
+
+  html?: string
+}
 
 const transporter = createTransport({
   service: mailer.service,
@@ -31,7 +32,8 @@ export const sendMail = async (options: SendMailOptions) => {
     from: options.from, //email sender
     to: options.to, //email receiver
     subject: options.subject,
-    text: options.text
+    text: options.text,
+    html: options.html
   })
   return sender
 }

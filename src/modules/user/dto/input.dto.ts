@@ -24,3 +24,21 @@ export class CreateUserDTO {
   @MinLength(6)
   password: string
 }
+
+export class ResetPasswordDTO {
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string
+}
+
+export class ChangePasswordDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  oldPassword: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @MinLength(6)
+  newPassword: string
+}
