@@ -21,16 +21,18 @@ export class UsersService {
 
   async create(body: CreateUserDTO): Promise<User> {
     const user = await this.userModel.findOne({ 
-      $or: [{ email: body.email }, { username: body.username }] 
+      $or: [{ email: body.email }, { username: body.username }]
     })
     if (user) {
       throw new BadRequestException('Username or email is already used')
     }
-    const registerMail = await sendMail(createAccountMail(user.email, user.username))
-    if (registerMail) {
-      const newUser = new this.userModel(body)
-      await newUser.save()
-      return newUser
+    else {
+      const registerMail = await sendMail(createAccountMail(body.email, body.username))
+      if (registerMail) {
+        const newUser = new this.userModel(body)
+        await newUser.save()
+        return newUser
+      }
     }
   }
 

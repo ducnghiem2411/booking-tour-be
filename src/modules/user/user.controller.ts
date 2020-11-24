@@ -13,6 +13,7 @@ export class UsersController {
   @Post()
   @ApiOkResponse({ description: 'Return created user', type: CreateUserDTO })
   async create(@Body() body: CreateUserDTO): Promise<CreateUserDTO> {
+    console.log('asdasda');
     let result
     try {
         result = await this.usersService.create(body);
