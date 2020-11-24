@@ -46,7 +46,9 @@ export class UsersService {
   }
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
+    console.log('serivce roi ne');
     const user = await this.userModel.findOne(loginDTO).select(['-password'])
+    console.log('user', user);
     if (user) {
       const payload = { email: user.email, username: user.username }
       const token = await this.tokenService.generateToken(payload)
@@ -76,7 +78,7 @@ export class UsersService {
 
   async forgetPassword(payload: ResetPasswordDTO, host): Promise<string> {
     console.log('email', payload);
-    const token = await this.tokenService.generateToken({ email: payload.email }, 60*5)
+    const token = await this.tokenService.generateToken({ email: payload.email }, { expiresIn: 60*5 })
     const user = await this.userModel.findOneAndUpdate({ email: payload.email }, { resetPasswordToken: token })
     console.log('user', user);
     if (user) {

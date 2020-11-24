@@ -26,9 +26,11 @@ export class UsersController {
   @Post('login')
   async login(@Body() body: LoginDTO): Promise<LoggedInDTO> {
     let result
+    console.log('1adasdsa');
     try {
       result = await this.usersService.login(body)
     } catch (e) {
+      console.log(e);
       throw new HttpException({...e}, e.statusCode)
     }
     return result

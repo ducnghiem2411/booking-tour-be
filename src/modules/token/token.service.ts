@@ -7,10 +7,8 @@ export class TokenService {
     private jwtService: JwtService
   ) {}
 
-  async generateToken(payload: Object, expired?: any) {
-    const token = this.jwtService.sign(payload, {
-      expiresIn: expired
-    })
+  async generateToken(payload: Object, options?: Object) {
+    const token = this.jwtService.sign(payload, options)
     return token
   }
 
