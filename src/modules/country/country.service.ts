@@ -47,7 +47,12 @@ export class CountriesService {
     .sort({ totalTour: -1 })
     .limit(6)
     .exec()
-    return tour
+    const queryArray = tour.map(t => ({ _id: t._id }))
+    const country = await this.countryModel.find({
+      $or: queryArray
+    })
+    const result = tour.map((t,i) => ({...t, image: country[i].image}))
+    return result 
   }
   
   async getById (id: string): Promise<CountryDTO> {

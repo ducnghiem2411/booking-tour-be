@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, HttpException, Param, Req, Put } from '@nestjs/common'
+import { Body, Controller, Get, Post, HttpException, Param, Req, Put, Res } from '@nestjs/common'
 import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { UsersService } from './user.service'
 
@@ -62,10 +62,14 @@ export class UsersController {
   }
 
   @Get('password/reset/:token')
-  async resetPasswordResponse(@Param('token')token: string): Promise<string> {
+  async resetPasswordResponse(@Param('token')token: string, @Res() res): Promise<string> {
     let result
     try {
       result = await this.usersService.forgetPasswordResponse(token)
+      console.log('result', result)
+      result === true 
+      ? res.send('resetPasswordSuccess.html')
+      : res.send('Reset password failed, try again')
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
