@@ -20,7 +20,7 @@ export const confirmCreateAccountMail = (to, username, url) => {
         padding: 20px 0;
       "
     >
-      tour<span style="color: #00d8ff">Nest</span>
+      Tour<span style="color: #00d8ff">Nest</span>
     </header>
     <div style="padding: 20px 0; width: 1024px; margin: 0 auto">
       <b style="font-size: 18px; font-family: Poppins, sans-serif">Hello ${username}</b>

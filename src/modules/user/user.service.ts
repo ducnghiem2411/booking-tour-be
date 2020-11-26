@@ -47,8 +47,9 @@ export class UsersService {
       { activeAccountToken: token, email: payload.email },
       { isActive: true }
     )
+    console.log('user', user);
     if (user) {
-      if (user.isActive === false) {
+      if (user.isActive === true) {
         throw new BadRequestException('Your account has been active already')
       }
       return true
