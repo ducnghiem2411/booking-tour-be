@@ -68,7 +68,7 @@ export class UsersService {
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
     const user = await this.userModel.findOne(loginDTO).select(['-password'])
-    if (user.isActive === false) {
+    if (user.isActive && user.isActive === false) {
       throw new BadRequestException('Please active your account first')
     }
     else if (user) {
