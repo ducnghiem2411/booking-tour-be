@@ -22,7 +22,7 @@ export class UsersService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async create(body: CreateUserDTO, host): Promise<GetUserDTO> {
+  async create(body: CreateUserDTO, host): Promise<string> {
     const user = await this.userModel.findOne({ 
       $or: [{ email: body.email }, { username: body.username }]
     })
@@ -36,7 +36,7 @@ export class UsersService {
       if (registerMail) {
         const newUser = new this.userModel({ ...body, activeAccountToken: token })
         await newUser.save()
-        return { username: newUser.username, email: newUser.email }
+        return 'Please check your email to active your account'
       }
     }
   }
