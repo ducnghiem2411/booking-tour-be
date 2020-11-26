@@ -20,7 +20,7 @@ export class ReviewService {
     if (booking) {
       const review = await this.reviewModel.findOne({ username: user.username, tourId: payload.tourId })
       if (review) {
-        throw new BadRequestException('You reviewed this tour')
+        throw new BadRequestException('You reviewed this place')
       }
       const newReview = new this.reviewModel({ username: user.username, ...payload })
       await newReview.save()

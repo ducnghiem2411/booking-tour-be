@@ -12,21 +12,35 @@ export class UsersController {
   
   @Post()
   @ApiOkResponse({ description: 'Return created user', type: CreateUserDTO })
-  async create(@Body() body: CreateUserDTO): Promise<CreateUserDTO> {
-    console.log('asdasda');
+  async create(@Req() req, @Body() body: CreateUserDTO): Promise<CreateUserDTO> {
     let result
+    const host = req.get('host')
     try {
-        result = await this.usersService.create(body);
+      result = await this.usersService.create(body, host)
     } catch (e) {
-        throw new HttpException({...e}, e.statusCode)
+      throw new HttpException({...e}, e.statusCode)
     }
     return result
+  }
+
+  @Get('registration/confirm/:token')
+  @ApiOkResponse({ description: 'Be used to active account' })
+  async activeAccount(@Param('token')token: string, @Res() res): Promise<any> {
+    let result
+    try {
+      result = await this.usersService.activeAccount(token)
+      result === true
+      ? res.sendFile('activeAccountSuccess.html', { root: 'static' })
+      : res.send('Active account failed')
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result 
   }
 
   @Post('login')
   async login(@Body() body: LoginDTO): Promise<LoggedInDTO> {
     let result
-    console.log('1adasdsa');
     try {
       result = await this.usersService.login(body)
     } catch (e) {
@@ -67,9 +81,9 @@ export class UsersController {
     try {
       result = await this.usersService.forgetPasswordResponse(token)
       console.log('result', result)
-      result === true 
-      ? res.send('resetPasswordSuccess.html')
-      : res.send('Reset password failed, try again')
+      result === true
+      ? res.sendFile('resetPasswordSuccess.html', { root: 'static' })
+      : res.sendFile('resetPasswordFailed.html', { root: 'static' })
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

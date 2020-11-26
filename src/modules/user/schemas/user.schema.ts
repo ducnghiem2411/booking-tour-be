@@ -18,7 +18,13 @@ export class User extends Document {
   @Prop()
   phone: string
 
-  @Prop()
+  @Prop({ type: Boolean, default: false })
+  isActive: Boolean
+
+  @Prop({ type: String, default: '' })
+  activeAccountToken: string
+
+  @Prop({ type: String, default: '' })
   resetPasswordToken: string
 }
 
