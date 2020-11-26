@@ -68,16 +68,16 @@ export class UsersService {
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
     const user = await this.userModel.findOne(loginDTO).select(['-password'])
-    if (user.isActive && user.isActive === false) {
+    if (!user) {
+      throw new BadRequestException('Email or password not match')
+    }
+    if (user && user.isActive === false) {
       throw new BadRequestException('Please active your account first')
     }
     else if (user) {
       const payload = { email: user.email, username: user.username }
       const token = await this.tokenService.generateToken(payload)
       return { accessToken: token, username: user.username, email: user.email }
-    }
-    else {
-      throw new BadRequestException('Email or password not match')
     }
   }
 
