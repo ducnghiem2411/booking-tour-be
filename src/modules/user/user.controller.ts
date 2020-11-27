@@ -63,12 +63,13 @@ export class UsersController {
     return result
   }
 
-  @Put('profile/:token')
+  @Put('profile/:username')
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({ schema: bodyEditUser })
-  @ApiOkResponse({ description: 'Return user profile', type: GetUserDTO })
-  async edit(@UploadedFile() file, @Req() req, @Body() body: EditUserDTO): Promise<GetUserDTO> {
+  @ApiOkResponse({ description: 'Return user profile', type: LoggedInDTO })
+  async edit(@UploadedFile() file, @Req() req, @Body() body: EditUserDTO): Promise<LoggedInDTO> {
     let result
     const token = req.headers.authorization.split(' ')[1]
     if (file) {
@@ -150,8 +151,8 @@ export class UsersController {
   }
 
   @Get(':token')
-  @ApiOkResponse({ description: 'Return user', type: GetUserDTO })
-  async findByToken(@Param('token') token: string): Promise<GetUserDTO> {
+  @ApiOkResponse({ description: 'Return user', type: LoggedInDTO })
+  async findByToken(@Param('token') token: string): Promise<LoggedInDTO> {
     let result
     try {
       result = this.usersService.findByToken(token);

@@ -22,6 +22,8 @@ export class UsersService {
     private readonly tokenService: TokenService,
   ) {}
 
+  withoutUnexpectedFields = ['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken']
+
   async create(body: CreateUserDTO, host): Promise<string> {
     const user = await this.userModel.findOne({ 
       $or: [{ email: body.email }, { username: body.username }]
@@ -59,17 +61,18 @@ export class UsersService {
   async findByToken(token: String): Promise<GetUserDTO> {
     const payload = await this.tokenService.getPayload(token)
     const user = await this.userModel.findOne({ email: payload.email })
-    .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
+    .select(this.withoutUnexpectedFields)
     return user
   }
 
   async findAll(): Promise<GetUserDTO[]> {
-    return await this.userModel.find().select(['-password'])
+    return await this.userModel.find()
+    .select(this.withoutUnexpectedFields)
   }
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
     const user = await this.userModel.findOne(loginDTO)
-    .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
+    .select(this.withoutUnexpectedFields)
     if (!user) {
       throw new BadRequestException('Email or password not match')
     }
@@ -91,7 +94,7 @@ export class UsersService {
     const { iat, exp, ...newPayload } = payload
     const newToken = await this.tokenService.generateToken(newPayload)
     const user = await this.userModel.findOne({username: payload.username, email: payload.email})
-    .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
+    .select(this.withoutUnexpectedFields)
     return { ...user.toJSON(), accessToken: newToken }
   }
 
@@ -101,10 +104,10 @@ export class UsersService {
       throw new UnauthorizedException()
     }
     const user = await this.userModel.findOneAndUpdate(
-      { email: payload.email }, 
+      { email: payload.email },
       { ...body },
       { new: true}
-    ) 
+    )
     return user
   }
 
@@ -114,7 +117,7 @@ export class UsersService {
       throw new UnauthorizedException()
     }
     const user = await this.userModel.findOneAndUpdate(
-      { password: body.oldPassword, email: payload.email }, 
+      { password: body.oldPassword, email: payload.email },
       { password: body.newPassword }
     )
     if (user) {
