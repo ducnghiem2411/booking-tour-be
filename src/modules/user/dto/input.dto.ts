@@ -46,7 +46,7 @@ export class EditUserDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsOptional()
-  avatar: string
+  image: string
 }
 export class ChangePasswordDTO {
   @ApiProperty()

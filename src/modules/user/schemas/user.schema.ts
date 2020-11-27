@@ -19,7 +19,7 @@ export class User extends Document {
   bio: string
 
   @Prop({ type: String, default: '' })
-  avatar: string
+  image: string
 
   @Prop({ type: Boolean, default: false })
   isActive: Boolean

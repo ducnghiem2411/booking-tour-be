@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, HttpException, Param, Req, Put, Res, UseInterceptors, UploadedFile } from '@nestjs/common'
 import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { UsersService } from './user.service'
 
 import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
 import { LoginDTO, CreateUserDTO, ResetPasswordDTO, ChangePasswordDTO, EditUserDTO } from './dto/input.dto'
-import { FileInterceptor } from '@nestjs/platform-express';
-import { file } from '@babel/types';
+import { bodyEditUser } from './schemas/api-doc.schema'
 
 @Controller('users')
 @ApiTags('Users')
@@ -63,17 +63,18 @@ export class UsersController {
     return result
   }
 
-  @Put('profile/:username')
-  @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
+  @Put('profile/:token')
   @UseInterceptors(FileInterceptor('image'))
-  async edit(@UploadedFile() file, @Body() body: EditUserDTO, @Req() req): Promise<GetUserDTO> {
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: bodyEditUser })
+  @ApiOkResponse({ description: 'Return user profile', type: GetUserDTO })
+  async edit(@UploadedFile() file, @Req() req, @Body() body: EditUserDTO): Promise<GetUserDTO> {
     let result
     const token = req.headers.authorization.split(' ')[1]
     if (file) {
       const host = req.get('host')
       const imageUrl = `http://${host}/upload/${file.filename}`
-      body.avatar = imageUrl
+      body.image = imageUrl
     }
     try {
       result = await this.usersService.edit(token, body)
