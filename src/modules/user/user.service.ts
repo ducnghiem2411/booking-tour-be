@@ -22,7 +22,7 @@ export class UsersService {
     private readonly tokenService: TokenService,
   ) {}
 
-  withoutUnexpectedFields = ['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken']
+  withoutUnexpectedFields = ['-activeAccountToken', '-password', '-resetPasswordToken']
 
   async create(body: CreateUserDTO, host): Promise<string> {
     const user = await this.userModel.findOne({ 
@@ -71,8 +71,9 @@ export class UsersService {
   }
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
-    const user = await this.userModel.findOne({ ...loginDTO, isActive: true })
+    const user = await this.userModel.findOne(loginDTO)
     .select(this.withoutUnexpectedFields)
+    console.log('user', user)
     if (!user) {
       throw new BadRequestException('Email or password not match')
     }
