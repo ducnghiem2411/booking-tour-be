@@ -56,8 +56,10 @@ export class UsersService {
     return false
   }
 
-  async findById(id: String): Promise<GetUserDTO> {
-    const user = await this.userModel.findById(id).select(['-password'])
+  async findByToken(token: String): Promise<GetUserDTO> {
+    const payload = await this.tokenService.getPayload(token)
+    const user = await this.userModel.findOne({ email: payload.email })
+    .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
     return user
   }
 
@@ -74,12 +76,11 @@ export class UsersService {
     if (user && user.isActive === false) {
       throw new BadRequestException('Please active your account first')
     }
-    else if (user) {
-      const payload = { email: user.email, username: user.username }
-      const token = await this.tokenService.generateToken(payload)
-      return { ...user, accessToken: token }
-    }
+    const payload = { email: user.email, username: user.username }
+    const token = await this.tokenService.generateToken(payload)
+    return { ...user.toJSON(), accessToken: token }
   }
+
 
   async loginWithFacebook () {
     return
@@ -91,7 +92,7 @@ export class UsersService {
     const newToken = await this.tokenService.generateToken(newPayload)
     const user = await this.userModel.findOne({username: payload.username, email: payload.email})
     .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
-    return { ...user, accessToken: newToken }
+    return { ...user.toJSON(), accessToken: newToken }
   }
 
   async edit(token: string, body: EditUserDTO): Promise<GetUserDTO> {

@@ -148,12 +148,12 @@ export class UsersController {
     return result
   }
 
-  @Get(':id')
+  @Get(':token')
   @ApiOkResponse({ description: 'Return user', type: GetUserDTO })
-  async findById(@Param('id') id: string): Promise<GetUserDTO> {
+  async findByToken(@Param('token') token: string): Promise<GetUserDTO> {
     let result
     try {
-      result = this.usersService.findById(id);
+      result = this.usersService.findByToken(token);
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }

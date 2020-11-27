@@ -7,4 +7,7 @@ export class LoggedInDTO {
   accessToken: string
   username: string
   email: string
+  phone: string
+  bio: string
+  avatar: string
 }

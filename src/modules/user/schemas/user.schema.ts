@@ -12,13 +12,13 @@ export class User extends Document {
   @Prop()
   password: string
 
-  @Prop()
+  @Prop({ type: String, default: '' })
   phone: string
 
-  @Prop()
+  @Prop({ type: String, default: '' })
   bio: string
 
-  @Prop()
+  @Prop({ type: String, default: '' })
   avatar: string
 
   @Prop({ type: Boolean, default: false })
