@@ -76,7 +76,7 @@ export class UsersService {
     else if (user) {
       const payload = { email: user.email, username: user.username }
       const token = await this.tokenService.generateToken(payload)
-      return { accessToken: token, username: user.username, email: user.email }
+      return { ...user, accessToken: token }
     }
   }
 
@@ -88,7 +88,8 @@ export class UsersService {
     const payload = await this.tokenService.getPayload(token)
     const { iat, exp, ...newPayload } = payload
     const newToken = await this.tokenService.generateToken(newPayload)
-    return { accessToken: newToken, username: payload.username, email: payload.email }
+    const user = await this.userModel.findOne({username: payload.username, email: payload.email})
+    return { ...user, accessToken: newToken}
   }
 
   async edit(token: string, body: EditUserDTO): Promise<GetUserDTO> {
