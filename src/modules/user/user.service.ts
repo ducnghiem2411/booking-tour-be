@@ -71,7 +71,7 @@ export class UsersService {
   }
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
-    const user = await this.userModel.findOne(loginDTO)
+    const user = await this.userModel.findOne({ ...loginDTO, isActive: true })
     .select(this.withoutUnexpectedFields)
     if (!user) {
       throw new BadRequestException('Email or password not match')
@@ -93,7 +93,7 @@ export class UsersService {
     const payload = await this.tokenService.getPayload(token)
     const { iat, exp, ...newPayload } = payload
     const newToken = await this.tokenService.generateToken(newPayload)
-    const user = await this.userModel.findOne({username: payload.username, email: payload.email})
+    const user = await this.userModel.findOne({username: payload.username, email: payload.email, isActive: true })
     .select(this.withoutUnexpectedFields)
     return { ...user.toJSON(), accessToken: newToken }
   }
