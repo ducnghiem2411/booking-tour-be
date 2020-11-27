@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, InternalServerErrorException, ForbiddenException } from '@nestjs/common'
+import { Injectable, BadRequestException, InternalServerErrorException, ForbiddenException, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { generate } from 'generate-password'
 
@@ -8,7 +8,7 @@ import { TokenService } from '../token/token.service'
 import { Model } from 'mongoose'
 import { User } from './schemas/user.schema'
 
-import { LoginDTO, CreateUserDTO, ChangePasswordDTO, ResetPasswordDTO } from './dto/input.dto'
+import { LoginDTO, CreateUserDTO, ChangePasswordDTO, ResetPasswordDTO, EditUserDTO } from './dto/input.dto'
 import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
 
 import { confirmCreateAccountMail } from './mail-content/confirm-create-account'
@@ -47,7 +47,6 @@ export class UsersService {
       { activeAccountToken: token, email: payload.email },
       { isActive: true }
     )
-    console.log('user', user);
     if (user) {
       if (user.isActive === true) {
         throw new BadRequestException('Your account has been active already')
@@ -81,6 +80,10 @@ export class UsersService {
     }
   }
 
+  async loginWithFacebook () {
+    return
+  }
+
   async updateLogin(token): Promise<LoggedInDTO> {
     const payload = await this.tokenService.getPayload(token)
     const { iat, exp, ...newPayload } = payload
@@ -88,8 +91,24 @@ export class UsersService {
     return { accessToken: newToken, username: payload.username, email: payload.email }
   }
 
+  async edit(token: string, body: EditUserDTO): Promise<GetUserDTO> {
+    const payload = await this.tokenService.getPayload(token)
+    if (!payload) {
+      throw new UnauthorizedException()
+    }
+    const user = await this.userModel.findOneAndUpdate(
+      { email: payload.email }, 
+      { ...body },
+      { new: true}
+    ) 
+    return user
+  }
+
   async changePassword(body: ChangePasswordDTO, token) {
     const payload = await this.tokenService.getPayload(token)
+    if (!payload) {
+      throw new UnauthorizedException()
+    }
     const user = await this.userModel.findOneAndUpdate(
       { password: body.oldPassword, email: payload.email }, 
       { password: body.newPassword }

@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, HttpException, Param, Req, Put, Res } from '@nestjs/common'
-import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+import { Body, Controller, Get, Post, HttpException, Param, Req, Put, Res, UseInterceptors, UploadedFile } from '@nestjs/common'
+import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger'
 import { UsersService } from './user.service'
 
 import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
-import { LoginDTO, CreateUserDTO, ResetPasswordDTO, ChangePasswordDTO } from './dto/input.dto'
+import { LoginDTO, CreateUserDTO, ResetPasswordDTO, ChangePasswordDTO, EditUserDTO } from './dto/input.dto'
+import { FileInterceptor } from '@nestjs/platform-express';
+import { file } from '@babel/types';
 
 @Controller('users')
 @ApiTags('Users')
@@ -22,6 +24,18 @@ export class UsersController {
     }
     return result
   }
+
+  // @Get('')
+  // @ApiOkResponse({})
+  // async loginWithFacebook() {
+  //   let result
+  //   try {
+  //     result = await this.usersService.loginWithFacebook()
+  //   } catch (e) {
+  //     throw new HttpException({...e}, e.statusCode)
+  //   }
+  //   return result
+  // }
 
   @Get('registration/confirm/:token')
   @ApiOkResponse({ description: 'Be used to active account' })
@@ -44,13 +58,32 @@ export class UsersController {
     try {
       result = await this.usersService.login(body)
     } catch (e) {
-      console.log(e);
       throw new HttpException({...e}, e.statusCode)
     }
     return result
   }
 
-  @Put('password')
+  @Put('profile/:username')
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
+  async edit(@UploadedFile() file, @Body() body: EditUserDTO, @Req() req): Promise<GetUserDTO> {
+    let result
+    const token = req.headers.authorization.split(' ')[1]
+    if (file) {
+      const host = req.get('host')
+      const imageUrl = `http://${host}/upload/${file.filename}`
+      body.avatar = imageUrl
+    }
+    try {
+      result = await this.usersService.edit(token, body)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
+
+  @Put('password/:username')
   @ApiBearerAuth()
   async changePassword(@Body() body: ChangePasswordDTO, @Req() req): Promise<any> {
     let result

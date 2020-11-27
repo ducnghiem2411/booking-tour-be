@@ -7,9 +7,6 @@ export class User extends Document {
   username: string
 
   @Prop()
-  age: number
-
-  @Prop()
   email: string
 
   @Prop()
@@ -17,6 +14,12 @@ export class User extends Document {
 
   @Prop()
   phone: string
+
+  @Prop()
+  bio: string
+
+  @Prop()
+  avatar: string
 
   @Prop({ type: Boolean, default: false })
   isActive: Boolean
