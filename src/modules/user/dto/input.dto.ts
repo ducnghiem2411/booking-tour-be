@@ -27,6 +27,7 @@ export class CreateUserDTO {
 
 export class ResetPasswordDTO {
   @ApiProperty()
+  @IsNotEmpty()
   email: string
 }
 

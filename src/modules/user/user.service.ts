@@ -66,7 +66,8 @@ export class UsersService {
   }
 
   async login(loginDTO: LoginDTO): Promise<LoggedInDTO> {
-    const user = await this.userModel.findOne(loginDTO).select(['-password'])
+    const user = await this.userModel.findOne(loginDTO)
+    .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
     if (!user) {
       throw new BadRequestException('Email or password not match')
     }
@@ -89,7 +90,8 @@ export class UsersService {
     const { iat, exp, ...newPayload } = payload
     const newToken = await this.tokenService.generateToken(newPayload)
     const user = await this.userModel.findOne({username: payload.username, email: payload.email})
-    return { ...user, accessToken: newToken}
+    .select(['-activeAccountToken', '-isActive', '-password', '-resetPasswordToken'])
+    return { ...user, accessToken: newToken }
   }
 
   async edit(token: string, body: EditUserDTO): Promise<GetUserDTO> {
