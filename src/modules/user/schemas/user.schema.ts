@@ -21,6 +21,9 @@ export class User extends Document {
   @Prop({ type: String, default: '' })
   image: string
 
+  @Prop()
+  googleAccessToken: string
+
   @Prop({ type: Boolean, default: false })
   isActive: Boolean
 

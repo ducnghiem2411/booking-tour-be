@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsMongoId, IsOptional, IsString } from 'class-validator'
+import { IsNotEmpty, IsMongoId, IsOptional, IsString, IsEmail } from 'class-validator'
 
 export class CreateTourDTO {
   @ApiProperty()
@@ -112,4 +112,11 @@ export class ListTourQuery {
   @ApiProperty({required: false})
   @IsOptional()
   checkout: Date
+}
+
+export class SubscribeDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string
 }

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, InternalServerErrorException, ForbiddenException, UnauthorizedException } from '@nestjs/common'
+import { Injectable, BadRequestException, ForbiddenException, UnauthorizedException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { generate } from 'generate-password'
 
@@ -8,7 +8,7 @@ import { TokenService } from '../token/token.service'
 import { Model } from 'mongoose'
 import { User } from './schemas/user.schema'
 
-import { LoginDTO, CreateUserDTO, ChangePasswordDTO, ResetPasswordDTO, EditUserDTO } from './dto/input.dto'
+import { LoginDTO, CreateUserDTO, ChangePasswordDTO, ResetPasswordDTO, EditUserDTO, LoginWithGoogleDTO } from './dto/input.dto'
 import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
 
 import { confirmCreateAccountMail } from './mail-content/confirm-create-account'
@@ -33,7 +33,7 @@ export class UsersService {
     }
     else {
       const token = await this.tokenService.generateToken({ email: body.email })
-      const url = `http://${host}/users/registration/confirm/${token}`
+      const url = `http://${host}/users/registration/confirmation/${token}`
       const registerMail = await sendMail(confirmCreateAccountMail(body.email, body.username, url))
       if (registerMail) {
         const newUser = new this.userModel({ ...body, activeAccountToken: token })
@@ -86,7 +86,13 @@ export class UsersService {
   }
 
 
-  async loginWithFacebook () {
+  async loginWithGoogle (body: LoginWithGoogleDTO): Promise<GetUserDTO> {
+    const user = this.userModel.findOne({ email: body.email})
+    if (!user) {
+      const token = this.tokenService.generateToken({ email: body.email })
+      const newUser = new this.userModel({ ...body, activeAccountToken: token })
+
+    }
     return
   }
 

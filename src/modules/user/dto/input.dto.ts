@@ -48,6 +48,7 @@ export class EditUserDTO {
   @IsOptional()
   image: string
 }
+
 export class ChangePasswordDTO {
   @ApiProperty()
   @IsNotEmpty()
@@ -57,4 +58,26 @@ export class ChangePasswordDTO {
   @IsNotEmpty()
   @MinLength(6)
   newPassword: string
+}
+
+export class LoginWithGoogleDTO  {
+  @ApiProperty()
+  @IsNotEmpty()
+  googleAccessToken: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  expiredIn: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  username: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  email: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  image: string
 }

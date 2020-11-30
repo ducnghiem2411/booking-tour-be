@@ -1,20 +1,27 @@
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { sendMail } from 'src/shared/mailer'
+import { TokenService } from '../token/token.service'
 
 import { Model } from 'mongoose'
 import { Tour } from './schemas/tour.schema'
-
-import { CreateTourDTO, EditTourDTO, ListTourQuery } from './dto/input.dto'
-import { TourDTO } from './dto/output.dto'
 import { Place } from '../place/schemas/place.schema'
+import { Subscriber } from '../tour/schemas/subscriber.schema'
 
-import { isEmpty, pickBy, identity } from 'lodash'
+import { CreateTourDTO, EditTourDTO, ListTourQuery, SubscribeDTO } from './dto/input.dto'
+import { TourDTO } from './dto/output.dto'
+
+import { isEmpty } from 'lodash'
+import { confirmSubscribeMail } from './mail-content/confirm-subscribe'
+import { newTourMail } from './mail-content/new-tour'
 
 @Injectable()
 export class ToursService {
   constructor(
     @InjectModel(Tour.name) private readonly tourModel: Model<Tour>,
-    @InjectModel(Place.name) private readonly placeModel: Model<Place>
+    @InjectModel(Place.name) private readonly placeModel: Model<Place>,
+    @InjectModel(Subscriber.name) private readonly subscriberModel: Model<Subscriber>,
+    private readonly tokenService: TokenService,
   ) {}
 
   async create(payload: CreateTourDTO): Promise<TourDTO> {
@@ -27,6 +34,45 @@ export class ToursService {
     const tour = new this.tourModel(payload)
     await tour.save()
     return tour
+  }
+
+  async sendToSubscribers (tourId: string): Promise<string> {
+    const subscribers = await this.subscriberModel.find({ isActive: true })
+    const newsMail = await sendMail(newTourMail(subscribers, 'News', `New tour on Tour Nest ${tourId}`))
+    if (newsMail) {
+      return 'Send to subscribers successfully'
+    }
+    return 'Send to subscribers failed'
+  }
+
+  async subscribe (body: SubscribeDTO, host) {
+    const token = await this.tokenService.generateToken({ email: body.email }, { expiresIn: 60*60*5 })
+    const url = `http://${host}/tours/subscribers/confirmation/${token}`
+    const registerSubMail = await sendMail(confirmSubscribeMail(body.email, url))
+    if (registerSubMail) {
+      const newSubscriber = new this.subscriberModel({ ...body, activeToken: token })
+      await newSubscriber.save()
+      return 'Please check your email to subscribe confirmation'
+    }
+    return 'Something went wrong'
+  }
+
+  async subscribeResponse (token) {
+    const payload = await this.tokenService.getPayload(token)
+    console.log('payload', payload);
+    if (!payload) {
+      return false
+    }
+    const subscriber = await this.subscriberModel.findOneAndUpdate(
+      { activeToken: token }, 
+      { isActive: true }, 
+      { new: true }
+    )
+    console.log('subscriber', subscriber);
+    if (subscriber) {
+      return true
+    }
+    return false
   }
 
   async getAll(options: ListTourQuery): Promise<any> {

@@ -4,7 +4,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { UsersService } from './user.service'
 
 import { GetUserDTO, LoggedInDTO } from './dto/output.dto'
-import { LoginDTO, CreateUserDTO, ResetPasswordDTO, ChangePasswordDTO, EditUserDTO } from './dto/input.dto'
+import { LoginDTO, CreateUserDTO, ResetPasswordDTO, ChangePasswordDTO, EditUserDTO, LoginWithGoogleDTO } from './dto/input.dto'
 import { bodyEditUser } from './schemas/api-doc.schema'
 
 @Controller('users')
@@ -14,7 +14,7 @@ export class UsersController {
   
   @Post()
   @ApiOkResponse({ description: 'Return created user', type: CreateUserDTO })
-  async create(@Req() req, @Body() body: CreateUserDTO): Promise<CreateUserDTO> {
+  async create(@Req() req, @Body() body: CreateUserDTO): Promise<GetUserDTO> {
     let result
     const host = req.get('host')
     try {
@@ -25,19 +25,19 @@ export class UsersController {
     return result
   }
 
-  // @Get('')
-  // @ApiOkResponse({})
-  // async loginWithFacebook() {
-  //   let result
-  //   try {
-  //     result = await this.usersService.loginWithFacebook()
-  //   } catch (e) {
-  //     throw new HttpException({...e}, e.statusCode)
-  //   }
-  //   return result
-  // }
+  @Post('/login/google')
+  @ApiOkResponse({})
+  async loginWithGoogle(@Body() body: LoginWithGoogleDTO): Promise<GetUserDTO> {
+    let result
+    try {
+      result = await this.usersService.loginWithGoogle(body)
+    } catch (e) {
+      throw new HttpException({...e}, e.statusCode)
+    }
+    return result
+  }
 
-  @Get('registration/confirm/:token')
+  @Get('registration/confirmation/:token')
   @ApiOkResponse({ description: 'Be used to active account' })
   async activeAccount(@Param('token')token: string, @Res() res): Promise<any> {
     let result
