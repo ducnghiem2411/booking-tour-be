@@ -33,7 +33,7 @@ export const resetPasswordResponseMail = (to, username, password) => {
         font-size: 14px;">Your new password: <b style=" font-size: 18px;
         font-family: 'Poppins', sans-serif;">${password}</b> </p>
         <div style="margin: 20px 0 30px 0;">
-        <a href="#" style="background: #1b94ba;
+        <a href="https://localhost:3000/login" style="background: #1b94ba;
         color: white;
         outline: none;
         border: none;

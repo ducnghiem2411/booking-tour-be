@@ -37,8 +37,9 @@ export class ToursService {
   }
 
   async sendToSubscribers (tourId: string): Promise<string> {
-    const subscribers = await this.subscriberModel.find({ isActive: true })
-    const newsMail = await sendMail(newTourMail(subscribers, 'News', `New tour on Tour Nest ${tourId}`))
+    const subscribers = await this.subscriberModel.find({ isActive: true }).select('email')
+    const subs = subscribers.map(s => s.email)
+    const newsMail = await sendMail(newTourMail(subs, 'News', `New tour on Tour Nest ${tourId}`)) //change me later
     if (newsMail) {
       return 'Send to subscribers successfully'
     }
@@ -68,7 +69,6 @@ export class ToursService {
       { isActive: true }, 
       { new: true }
     )
-    console.log('subscriber', subscriber);
     if (subscriber) {
       return true
     }

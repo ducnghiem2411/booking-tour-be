@@ -55,7 +55,7 @@ export class ToursController {
     try {
       result = await this.toursService.subscribeResponse(token)
       result === true
-      ? res.send('Active account success')
+      ? res.sendFile('activeSubscribeSuccess.html', { root: 'static' })
       : res.send('Active account failed')
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
@@ -63,9 +63,9 @@ export class ToursController {
     return result 
   }
   
-  @Post('/subscribers/:tourId')
+  @Post('/subscribers/send-email/:tourId')
   @ApiOkResponse({ description: 'Send email to subscribers' })
-  async sendToSubscribers(@Param() tourId: string): Promise<string> {
+  async sendToSubscribers(@Param('tourId') tourId: string): Promise<string> {
     let result
     try {
       result = this.toursService.sendToSubscribers(tourId)
