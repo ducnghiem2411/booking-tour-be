@@ -149,7 +149,7 @@ export class UsersService {
 
   async forgetPasswordResponse(token: string): Promise<Boolean> {
     const payload = await this.tokenService.getPayload(token)
-    if (payload!) {
+    if (!payload) {
       return false
     }
     const user = await this.userModel.findOneAndUpdate(
