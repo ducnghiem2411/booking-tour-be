@@ -14,6 +14,7 @@ import { TourDTO } from './dto/output.dto'
 import { isEmpty } from 'lodash'
 import { confirmSubscribeMail } from './mail-content/confirm-subscribe'
 import { newTourMail } from './mail-content/new-tour'
+import { MSG } from 'src/shared/message'
 
 @Injectable()
 export class ToursService {
@@ -27,7 +28,7 @@ export class ToursService {
   async create(payload: CreateTourDTO): Promise<TourDTO> {
     const place = await this.placeModel.findOne({ _id: payload.placeId, name: payload.place })
     if (!place) {
-      throw new BadRequestException('Place id or name does not match')
+      throw new BadRequestException(MSG.ID_OR_NAME_NOT_MATCH)
     }
     payload.checkIn = new Date(payload.checkIn)
     payload.checkOut = new Date(payload.checkOut)
@@ -41,47 +42,42 @@ export class ToursService {
     const subs = subscribers.map(s => s.email)
     const newsMail = await sendMail(newTourMail(subs, 'News', `New tour on Tour Nest ${tourId}`)) //change me later
     if (newsMail) {
-      return 'Send to subscribers successfully'
+      return MSG.SEND_NEWS_SUCCESS
     }
-    return 'Send to subscribers failed'
+    return MSG.SEND_NEWS_FAILED
   }
 
-  async subscribe (body: SubscribeDTO, host) {
+  async subscribe (body: SubscribeDTO, host): Promise<Boolean> {
+    const sub = await this.subscriberModel.findOne({ email: body.email })
+    if (sub) { return false }
     const token = await this.tokenService.generateToken({ email: body.email }, { expiresIn: 60*60*5 })
     const url = `http://${host}/tours/subscribers/confirmation/${token}`
     const registerSubMail = await sendMail(confirmSubscribeMail(body.email, url))
     if (registerSubMail) {
       const newSubscriber = new this.subscriberModel({ ...body, activeToken: token })
       await newSubscriber.save()
-      return 'Please check your email to subscribe confirmation'
-    }
-    return 'Something went wrong'
-  }
-
-  async subscribeResponse (token) {
-    const payload = await this.tokenService.getPayload(token)
-    console.log('payload', payload);
-    if (!payload) {
-      return false
-    }
-    const subscriber = await this.subscriberModel.findOneAndUpdate(
-      { activeToken: token }, 
-      { isActive: true }, 
-      { new: true }
-    )
-    if (subscriber) {
       return true
     }
     return false
   }
 
+  async subscribeResponse (token) {
+    const payload = await this.tokenService.getPayload(token)
+    if (!payload) { return false }
+    const subscriber = await this.subscriberModel.findOneAndUpdate(
+      { activeToken: token },
+      { isActive: true },
+      { new: true }
+    )
+    if (subscriber) { return true }
+    return false
+  }
+
   async getAll(options: ListTourQuery): Promise<any> {
-    if (isEmpty(options)) {
-      return await this.tourModel.find()
-    }
+    if (isEmpty(options)) { return await this.tourModel.find() }
     if (options.limit && options.page) {
       const limit = Number(options.limit)
-      const page = Number(options.page) 
+      const page = Number(options.page)
       const tours = await this.tourModel.find()
       .sort('checkIn')
       .skip(limit*page - limit)
@@ -95,6 +91,7 @@ export class ToursService {
     .find({
       country: options.country,
       place: options.place,
+      //default values when params is null
       price: {
         $gte: options.minprice || 0,
         $lte: options.maxprice || 9999999999
@@ -112,10 +109,8 @@ export class ToursService {
 
   async delete(id: string): Promise<string> {
     const tour = await this.tourModel.deleteOne({ _id: id })
-    if (tour.deletedCount !== 0) {
-      return 'tour was deleted'
-    }
-    return 'no tour matched'
+    if (tour.deletedCount !== 0) { return MSG.TOUR_DELETED }
+    return MSG.TOUR_NOT_MATCH
   }
 
   async findById(id: string): Promise<TourDTO> {
@@ -125,9 +120,9 @@ export class ToursService {
   async edit(id: string, payload: EditTourDTO): Promise<string> {
     const editedTour = await this.tourModel.findByIdAndUpdate(id, payload, {new: true})
     if (!editedTour) {
-      throw new BadRequestException('Id not match')
+      throw new BadRequestException(MSG.ID_NOT_MATCH)
     }
-    return editedTour 
+    return editedTour
   }
 
 }

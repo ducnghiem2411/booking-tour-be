@@ -16,5 +16,5 @@ export class TokenService {
     const payload = this.jwtService.verify(token)
     return payload
   }
-  
+
 }

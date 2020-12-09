@@ -8,6 +8,7 @@ import { Country } from '../country/schemas/country.schema'
 import { PlaceDTO } from './dto/output.dto'
 import { EditPlaceDTO, CreatePlaceDTO } from './dto/input.dto'
 import { Tour } from '../tour/schemas/tour.schema'
+import { MSG } from 'src/shared/message';
 
 @Injectable()
 export class PlacesService {
@@ -20,11 +21,11 @@ export class PlacesService {
   async create(payload: CreatePlaceDTO): Promise<PlaceDTO> {
     const country = await this.countryModel.findOne({ _id: payload.countryId, name: payload.country })
     if (!country) {
-      throw new BadRequestException('Country id or name does not match')
+      throw new BadRequestException(MSG.ID_OR_NAME_NOT_MATCH)
     }
     const place = await this.placeModel.findOne({ name: payload.name })
     if (place) {
-      throw new BadRequestException('Place is existed')      
+      throw new BadRequestException(MSG.RESOURCE_EXISTED)
     }
     const newPlace = new this.placeModel(payload)
     await newPlace.save()
@@ -43,7 +44,7 @@ export class PlacesService {
   async edit(id: string, payload: EditPlaceDTO): Promise<any> {
     const editedPlace = await this.placeModel.findByIdAndUpdate(id, payload, { new: true })
     if (!editedPlace) {
-      throw new BadRequestException('Id not match')
+      throw new BadRequestException(MSG.ID_NOT_MATCH)
     }
     return editedPlace
   }
@@ -52,10 +53,10 @@ export class PlacesService {
     const place = await this.placeModel.findOneAndDelete({ _id: id })
     if (place) {
       await this.tourModel.deleteMany({ placeId: id })
-      return 'place was deleted'
+      return MSG.RESOURCE_DELETED_SUCCESS
     }
     else {
-      throw new BadRequestException('Id not match')
+      throw new BadRequestException(MSG.ID_NOT_MATCH)
     }
   }
 

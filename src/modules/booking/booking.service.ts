@@ -6,6 +6,7 @@ import { Booking } from './schemas/booking.schema'
 
 import { BookingDTO } from './dto/input.dto'
 import { Tour } from '../tour/schemas/tour.schema';
+import { MSG } from 'src/shared/message';
 
 @Injectable()
 export class BookingService {
@@ -17,11 +18,11 @@ export class BookingService {
   async create (user, payload: BookingDTO): Promise<any> {
     const tour = await this.tourModel.findById(payload.tourId)
     if (!tour) {
-      throw new BadRequestException('Tour does not existed')
+      throw new BadRequestException(MSG.TOUR_DOES_NOT_EXISTED)
     }
     const userBooking = await this.bookingModel.findOne({ username: user.username, tourId: payload.tourId })
     if (userBooking) {
-      throw new BadRequestException('You already booked this tour')
+      throw new BadRequestException()
     }
     const newUserBooking = new this.bookingModel({ username: user.username, ...payload })
     await newUserBooking.save()
@@ -35,9 +36,9 @@ export class BookingService {
   async delete (id) {
     const booking = await this.bookingModel.findOneAndDelete({ _id: id })
     if(booking) {
-      return 'place was deleted'
+      return MSG.RESOURCE_DELETED_SUCCESS
     }
-    throw new BadRequestException('Id not match')
+    throw new BadRequestException(MSG.ID_NOT_MATCH)
   }
 
 }

@@ -8,6 +8,7 @@ import { Tour } from '../tour/schemas/tour.schema'
 
 import { CountryDTO } from './dto/output.dto'
 import { CreateCountryDTO, EditCountryDTO } from './dto/input.dto'
+import { MSG } from 'src/shared/message'
 
 @Injectable()
 export class CountriesService {
@@ -20,7 +21,7 @@ export class CountriesService {
   async create(payload: CreateCountryDTO): Promise<CountryDTO> {
     const country = await this.countryModel.findOne({ name: payload.name })
     if (country) {
-      throw new BadRequestException('Country is existed')
+      throw new BadRequestException(MSG.RESOURCE_EXISTED)
     }
     const newCountry = new this.countryModel(payload)
     await newCountry.save()
@@ -47,14 +48,15 @@ export class CountriesService {
     .sort({ totalTour: -1 })
     .limit(6)
     .exec()
+
     const queryArray = tour.map(t => ({ _id: t._id }))
     const country = await this.countryModel.find({
       $or: queryArray
     })
     const result = tour.map((t,i) => ({...t, image: country[i].image}))
-    return result 
+    return result
   }
-  
+
   async getById (id: string): Promise<CountryDTO> {
     return await this.countryModel.findById(id)
   }
@@ -62,7 +64,7 @@ export class CountriesService {
   async edit(id: string, payload: EditCountryDTO): Promise<string> {
     const editedCountry = await this.countryModel.findByIdAndUpdate(id, payload, {new: true})
     if (!editedCountry) {
-      throw new BadRequestException('Id not match')
+      throw new BadRequestException(MSG.ID_NOT_MATCH)
     }
     return editedCountry
   }
@@ -72,10 +74,10 @@ export class CountriesService {
     if (country) {
       await this.placeModel.deleteMany({ countryId: country._id })
       await this.tourModel.deleteMany({ countryId: country._id })
-      return 'Country was deleted'
+      return MSG.RESOURCE_DELETED_SUCCESS
     }
     else {
-      throw new BadRequestException('Id not match')
+      throw new BadRequestException(MSG.ID_NOT_MATCH)
     }
   }
 

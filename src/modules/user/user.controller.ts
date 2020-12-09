@@ -11,7 +11,7 @@ import { bodyEditUser } from './schemas/api-doc.schema'
 @ApiTags('Users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  
+
   @Post()
   @ApiOkResponse({ description: 'Return created user', type: CreateUserDTO })
   async create(@Req() req, @Body() body: CreateUserDTO): Promise<GetUserDTO> {

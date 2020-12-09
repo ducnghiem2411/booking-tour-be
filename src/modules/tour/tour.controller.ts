@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFiles, Req, Query, Res } from '@nestjs/common'
+import { Body, Controller, Get, Post, HttpException, Param, Put, Delete, UseInterceptors, UploadedFiles, Req, Query, Res, BadRequestException } from '@nestjs/common'
 import { ApiOkResponse, ApiBody, ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger'
 import { FilesInterceptor } from '@nestjs/platform-express'
 
@@ -42,12 +42,16 @@ export class ToursController {
       const host = req.get('host')
     try {
       result = this.toursService.subscribe(body, host)
+      if (result === false) {
+        return 'Maybe your email has been activated, please check your email or try again'
+      } else {
+        return 'Subscribe successfully, please check your email to confirm'
+      }
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
-    return result
   }
-  
+
   @Get('subscribers/confirmation/:token')
   @ApiOkResponse({ description: 'Be used to active subscriber' })
   async subscribeResponse(@Param('token')token: string, @Res() res): Promise<Boolean> {
@@ -56,13 +60,13 @@ export class ToursController {
       result = await this.toursService.subscribeResponse(token)
       result === true
       ? res.sendFile('activeSubscribeSuccess.html', { root: 'static' })
-      : res.send('Active account failed')
+      : res.sendFile('activeSubscribeFailed.html', { root: 'static' })
     } catch (e) {
       throw new HttpException({...e}, e.statusCode)
     }
-    return result 
+    return result
   }
-  
+
   @Post('/subscribers/send-email/:tourId')
   @ApiOkResponse({ description: 'Send email to subscribers' })
   async sendToSubscribers(@Param('tourId') tourId: string): Promise<string> {
@@ -111,7 +115,7 @@ export class ToursController {
     }
     return result
   }
-  
+
   @Get('/place-id/:id')
   @ApiOkResponse({ description: 'Return tour by place id'})
   async getTourByPlaceId(@Param('id') placeId: string): Promise<any> {

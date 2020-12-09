@@ -7,6 +7,7 @@ import { Review } from './schemas/review.schema'
 
 import { ReviewDTO } from './dto/output.dto'
 import { CreateReviewDTO } from './dto/input.dto'
+import { MSG } from 'src/shared/message'
 
 @Injectable()
 export class ReviewService {
@@ -20,13 +21,13 @@ export class ReviewService {
     if (booking) {
       const review = await this.reviewModel.findOne({ username: user.username, tourId: payload.tourId })
       if (review) {
-        throw new BadRequestException('You reviewed this place')
+        throw new BadRequestException()
       }
       const newReview = new this.reviewModel({ username: user.username, ...payload })
       await newReview.save()
       return newReview
     }
-    throw new BadRequestException('You have to book this tour to review')
+    throw new BadRequestException(MSG.BOOK_REQUIRED)
   }
 
   async getReviewByPlace(id): Promise<ReviewDTO[]> {
@@ -36,9 +37,9 @@ export class ReviewService {
   async delete(id: string): Promise<string> {
     const reviewToDelete =  await this.reviewModel.findOneAndDelete(id)
     if (reviewToDelete) {
-      return 'Delete review successfully'
+      return MSG.RESOURCE_DELETED_SUCCESS
     }
-    throw new BadRequestException('Id not match')
+    throw new BadRequestException(MSG.ID_NOT_MATCH)
   }
 
   async deleteAll() {
