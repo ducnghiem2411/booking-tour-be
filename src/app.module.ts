@@ -12,7 +12,7 @@ import { ReviewModule } from './modules/review/review.module'
 @Module({
   imports: [
     MongooseModule.forRoot(
-      `mongodb+srv://nghiemld:pBooktour123@cluster0.txwil.mongodb.net/BookTour?retryWrites=true&w=majority`
+      `mongodb+srv://nghiemld:01unstable@testnet-accounts.uzy1c.mongodb.net/IT43?retryWrites=true&w=majority`
     ),
     UsersModule,
     CountriesModule,

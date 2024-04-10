@@ -17,7 +17,7 @@ async function bootstrap() {
   require('dotenv').config();
   console.log('process.env', process.env.MONGODB_URI);
   
-  const ENV = `${process.env.ENV || 'production'}`.toLowerCase()
+  const ENV = `${process.env.ENV || 'develop'}`.toLowerCase()
   const PORT = process.env.PORT || 8000
   
   const app = await NestFactory.create(AppModule)

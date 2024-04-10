@@ -14,15 +14,9 @@ export class UsersController {
 
   @Post()
   @ApiOkResponse({ description: 'Return created user', type: CreateUserDTO })
-  async create(@Req() req, @Body() body: CreateUserDTO): Promise<GetUserDTO> {
-    let result
+  create(@Req() req, @Body() body: CreateUserDTO): Promise<string> {
     const host = req.get('host')
-    try {
-      result = await this.usersService.create(body, host)
-    } catch (e) {
-      throw new HttpException({...e}, e.statusCode)
-    }
-    return result
+    return this.usersService.create(body, host)
   }
 
   @Post('/login/google')

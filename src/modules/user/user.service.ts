@@ -47,7 +47,10 @@ export class UsersService {
       { isActive: true }
     )
     if (user) {
-      if (user.isActive === true) { throw new BadRequestException(MSG.ACTIVATED) }
+      if (user.isActive === true) { 
+        // throw new BadRequestException(MSG.ACTIVATED) 
+        return true
+      }
       return true
     }
     return false
